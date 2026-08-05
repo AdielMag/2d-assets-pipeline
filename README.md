@@ -25,54 +25,49 @@
 
 ---
 
-## TL;DR
+### Overview
 
-> **Feed it a screenshot → get back every button, frame and icon as a separate transparent PNG, already imported into Unity as a sprite atlas.**
->
-> The trick: a screenshot **already contains** the exact pixels of every element on it. So the pipeline **cuts elements out** instead of asking an AI to redraw them — pixel-perfect, free, offline. Image models are the fallback for elements buried under other things, not the default.
+Feed it a screenshot → get back every button, frame, and icon as a separate transparent PNG, automatically imported into Unity as a sprite atlas.
+
+**Why extract instead of generate?** A screenshot already contains the exact pixels of every element on it. The pipeline cuts elements out instead of asking an AI model to redraw them — keeping extraction pixel-perfect, free, and completely offline. Generative AI models serve as an optional fallback for heavily occluded elements.
 
 ```bash
-# 1. install
+# 1. Install
 python -m venv server/.venv && server/.venv/Scripts/activate
 pip install -r server/requirements.txt
 npm --prefix client install
 
-# 2. run (both servers)
+# 2. Run (both servers)
 ./start-dev.ps1
 ```
 
-Then open **http://localhost:5173**. No API keys needed to start — extraction never calls a provider.
+Then open **http://localhost:5173**. No API keys are required to start — extraction runs offline without calling any cloud providers.
 
 <details>
-<summary><b>📖 Full table of contents</b></summary>
+<summary><b>📖 Table of Contents</b></summary>
 
 <br/>
 
-| Section | What's in it |
+| Section | Contents |
 |---|---|
-| [🎯 What it does](#-what-it-does) | The core idea + why extract beats generate |
-| [✨ What we have](#-what-we-have) | Feature inventory and repo stats |
-| [🚀 How to run it](#-how-to-run-it) | Install, providers, optional ML models |
-| [🏗️ Architecture](#️-architecture) | Tech stack and how the pieces talk |
-| [🔄 The six-step pipeline](#-the-six-step-pipeline) | Screenshot → Unity, with screenshots |
-| [🔬 How extraction works](#-how-extraction-works) | Segment → matte → grow |
-| [🗃️ Data model](#️-data-model) | Tables and relationships |
-| [📁 Storage layout](#-storage-layout) | Where every file lives on disk |
-| [🎮 Unity integration](#-unity-integration) | Atlases, 9-slice, screen prefabs |
-| [🧪 Tests, coverage & CI](#-tests-coverage--ci) | What runs on every PR |
-| [🤝 Contributing](#-contributing) | Branch protection and merge rules |
+| [🎯 How It Works](#-how-it-works) | Core segmentation strategy & comparison |
+| [✨ Core Features](#-core-features) | Feature inventory & repository stats |
+| [🚀 Quick Start](#-quick-start) | Step-by-step setup and running |
+| [🏗️ Architecture](#️-architecture) | System diagram & tech stack details |
+| [🔄 The 6-Step Pipeline](#-the-6-step-pipeline) | Breakdown workflow & visual guide |
+| [🔬 Extraction Engine](#-extraction-engine) | HQ-SAM, alpha matting, and inpainting details |
+| [🗃️ Data Model & Storage](#️-data-model--storage) | Schema ER diagram & disk directory structure |
+| [🎮 Unity Integration](#-unity-integration) | SpriteAtlases, 9-slice, and prefab generation |
+| [🧪 Testing & Quality Gates](#-testing--quality-gates) | Test suite and CI coverage enforcement |
+| [🤝 Contributing](#-contributing) | Branch protection & merge requirements |
 
 </details>
 
 ---
 
-## 🎯 What it does
+## 🎯 How It Works
 
-**TL;DR — it segments elements out of the screenshot rather than regenerating them, so the common case is pixel-exact, free and offline.**
-
-You give it a screenshot of a game screen. It gives you back every button, frame, icon and bar
-as an individual transparent PNG, organised into domains, imported into Unity as sprite atlases
-with the right 9-slice borders.
+By segmenting elements directly out of the screenshot rather than regenerating them, common extraction tasks are pixel-exact, free, and instant.
 
 ```mermaid
 flowchart LR
@@ -93,171 +88,108 @@ flowchart LR
 ```
 
 <details>
-<summary><b>Why not just generate everything?</b></summary>
+<summary><b>💡 Deep Dive: Why extract beats generate</b></summary>
 
 <br/>
 
-| | Extract (cut from the screenshot) | Generate (ask an image model) |
+| Metric / Aspect | Extract (Cut from screenshot) | Generate (Image Model AI) |
 |---|---|---|
-| **Colour fidelity** | Exact — the original pixels | Drifts in hue and saturation |
-| **Shape fidelity** | Exact | Plausible lookalike, wrong proportions |
+| **Colour fidelity** | Exact — uses original pixels | Drifts in hue and saturation |
+| **Shape fidelity** | Exact proportions | Plausible lookalike, wrong geometry |
 | **Cost** | Free, offline | Burns provider quota / credits |
-| **Speed** | Seconds | 10s–minutes per image |
-| **Works when** | The element is visible | Always |
-| **Used for** | The default path | Heavily occluded elements only |
+| **Speed** | Instant (seconds) | 10s–minutes per image |
+| **Requirement** | Element is visible | None |
+| **Primary Use** | Default path for UI elements | Heavily occluded elements only |
 
-Both paths land in the same versioned asset, so an extracted `v2` can be compared against a
-generated `v1` of the same element using the built-in fidelity scores.
+Both paths land in the same versioned asset system, allowing an extracted version to be scored directly against a generated version using built-in fidelity metrics.
 
 </details>
 
 ---
 
-## ✨ What we have
+## ✨ Core Features
 
-**TL;DR — a full asset library with version history, a 6-step screen breakdown wizard, 4 image providers, and one-click Unity export.**
+- **🖼️ Asset Library**: Self-referential domain trees mapping 1:1 to Unity `SpriteAtlas` assets, complete version history, prompt tuning, non-destructive re-scaling, and interactive 9-slice editing.
+- **🔍 Screen Breakdown Wizard**: Automatic Vision-LLM candidate detection, edge gradient snapping (OpenCV + NMS), sub-asset splitting, shared background grouping, and asset reuse matching.
+- **🎨 Generation Providers**: Support for Antigravity (Google AI Pro/Ultra), Higgsfield CLI, and Gemini API with hard spend controls, pre-execution cost estimation, and automated chroma-keying.
+- **🎮 Unity Export**: Automated `.spriteatlas` generation, `.import.json` sidecars, custom import scripts, 9-slice borders, and full screen prefab reconstruction.
 
 <details>
-<summary><b>🖼️ Asset library</b></summary>
+<summary><b>📊 Repository Stats & Detailed Inventory</b></summary>
 
 <br/>
 
-- Domain tree (self-referential atlases), each domain maps 1:1 to a Unity `SpriteAtlas`
-- Full version history per asset — every generation kept, any one selectable
-- Per-asset prompt, aspect ratio, resolution, PPU, 9-slice borders
-- Reference images at project *and* asset level
-- Trim to content · Upscale 2× · Downscale 0.5× (re-derived from the pristine raw, never a blurry resize)
-- Built-in image editor + 9-slice editor with live tile preview
-
-</details>
-
-<details>
-<summary><b>🔍 Screen breakdown</b></summary>
-
-<br/>
-
-- Vision-LLM element detection with per-edge gradient snapping and NMS
-- Sub-asset splitting (a nav bar → its five icons)
-- Shared-background grouping (gem/gold pills share one frame + separate icons)
-- Mirror detection (a `next`/`prev` arrow pair reuses one sprite, flipped)
-- Reuse approval — matches new elements against assets already in the domain
-- Live SSE progress with intermediate images
-
-</details>
-
-<details>
-<summary><b>🎨 Generation providers</b></summary>
-
-<br/>
-
-- **Antigravity** — Google AI Pro/Ultra subscription, no per-image billing
-- **Higgsfield** — official CLI against your own plan
-- **Gemini** — direct Generative Language REST API (needs a key)
-- Per-provider enable toggles that hard-block spend server-side
-- Live cost estimation before you press the button
-- Magenta chroma-key removal for providers without native alpha
-
-</details>
-
-<details>
-<summary><b>🎮 Unity export</b></summary>
-
-<br/>
-
-- One `SpriteAtlas` per domain, built automatically
-- `.import.json` sidecars + an auto-installed `AssetPipelineImporter.cs`
-- Per-domain export path overrides under `Assets/Sprites/`
-- Point/bilinear filtering, clamp/repeat wrap, power-of-two padding
-- Screen prefab builder — rebuilds the whole screen from its sprites
-- Text stays *data*, re-rendered by Unity with a real font (localisable)
-
-</details>
-
-<details>
-<summary><b>📊 Repo at a glance</b></summary>
-
-<br/>
+### Repository at a Glance
 
 | Area | Contents | Lines |
 |---|---|---:|
 | `server/app/` + `server/tools/` | FastAPI app, 10 routers, 12 image-processing modules, 4 providers, 13 CLI tools | **17,225** |
 | `client/src/` | React 19 SPA — 7 pages, 6-step screen wizard, 8 shared components | **11,073** |
-| `server/tests/` | 73 pytest tests over the processing algorithms | **1,418** |
+| `server/tests/` | 73 pytest tests over processing algorithms | **1,418** |
 | `unity/Editor/` | Importer, atlas builder, screen layout builder | **566** |
 | `unity-clashup/` | Demo Unity project with 60 exported sprites across 6 atlases | — |
+
+<br/>
+
+### Full Feature Breakdown
+
+- **Asset Library**: Domain trees, version history per asset, custom prompts, aspect ratio, PPU, 9-slice controls, built-in image editor.
+- **Screen Breakdown**: Vision-LLM element detection with per-edge snapping, sub-asset splitting, shared-background grouping, mirror detection (flipping symmetrical sprites), and live SSE progress.
+- **Generation Providers**: Antigravity, Higgsfield, Gemini REST, per-provider spend-block toggles, live cost estimates, and magenta chroma-key removal.
+- **Unity Export**: Automated `SpriteAtlas` creation, `.import.json` sidecars, point/bilinear filtering, clamp/repeat modes, power-of-two padding, and font-preserved text re-rendering.
 
 </details>
 
 ---
 
-## 🚀 How to run it
+## 🚀 Quick Start
 
-**TL;DR — Python 3.10+ and Node 20+, then `./start-dev.ps1`. Providers are optional; extraction works with zero keys.**
-
-<details>
-<summary><b>1 · Install</b></summary>
-
-<br/>
+### 1. Installation
 
 ```bash
 git clone https://github.com/AdielMag/2d-assets-pipeline.git
 cd 2d-assets-pipeline
-```
 
-**Server:**
-
-```bash
+# Server setup
 python -m venv server/.venv
-server/.venv/Scripts/activate
+server/.venv/Scripts/activate  # On Windows
 pip install -r server/requirements.txt
-```
 
-**Client:**
-
-```bash
+# Client setup
 npm --prefix client install
 ```
 
-| | Needed for |
-|---|---|
-| **Python 3.10+** | The FastAPI server |
-| **Node 20+** | The Vite client |
-| **Unity 2022.3+** | Only if you want to export |
-| *Optional:* NVIDIA GPU | Local SAM2 / LaMa / Real-ESRGAN — degrades to classical fallbacks without one |
+### 2. Run the Application
 
-</details>
+```bash
+# Windows launch script (starts server + client)
+./start-dev.ps1
+```
+
+Access the UI at **http://localhost:5173** (API docs available at **http://localhost:8787/docs**).
 
 <details>
-<summary><b>2 · Configure providers (all optional)</b></summary>
+<summary><b>⚙️ Provider Configuration & Optional Local ML Models</b></summary>
 
 <br/>
 
+### Environment & Providers Configuration
+
+Copy `.env.example` to `server/.env`:
 ```bash
 cp server/.env.example server/.env
 ```
 
-The app boots with no keys at all — it just can't *generate* images until a provider is set up.
-**Extraction never needs a provider.**
+Extraction requires zero keys. Optional generation provider credentials:
+- **Antigravity**: Authenticated via Google AI Pro/Ultra login in the Antigravity CLI.
+- **Higgsfield**: Configured via `@higgsfield/cli`.
+- **Gemini**: Requires `GEMINI_API_KEY` set in `server/.env`.
 
-| Provider | Setup | Cost |
-|---|---|---|
-| **Antigravity** | Install the Antigravity CLI, sign in with Google | Free on an AI Pro/Ultra plan |
-| **Higgsfield** | `npm i -g @higgsfield/cli` then `higgsfield auth login` | Uses your plan's credits |
-| **Gemini** | Set `GEMINI_API_KEY` in `server/.env` | Per-request API billing |
-| **Claude / Antigravity (text)** | The CLI on your `PATH` | Free on your existing login |
+Providers can be toggled on/off in the settings UI to prevent inadvertent API usage.
 
-Text LLMs drive prompt refinement and vision region-detection. Providers can be toggled off in
-the UI — the server then *refuses* to generate with them, so a disabled provider can never
-spend money.
+### Optional Local ML Acceleration
 
-</details>
-
-<details>
-<summary><b>3 · Optional: the local ML models</b></summary>
-
-<br/>
-
-Extraction quality is meaningfully better with these, but the pipeline works without them:
+Installing PyTorch and local models improves extraction quality (falls back to classical algorithms if uninstalled):
 
 ```bash
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
@@ -265,52 +197,13 @@ pip install --no-deps sam2 simple-lama-inpainting
 pip install -r server/requirements-ml.txt
 ```
 
-> **Note** the `--no-deps` on `sam2`: its dependency set pulls `opencv-python`, which collides
-> with the `opencv-python-headless` in the base requirements over the same `cv2` module.
-
-</details>
-
-<details>
-<summary><b>4 · Run</b></summary>
-
-<br/>
-
-**One command (Windows):**
-
-```bash
-./start-dev.ps1
-```
-
-**Or manually, in two terminals:**
-
-```bash
-python -m uvicorn app.main:app --port 8787 --app-dir server
-```
-
-```bash
-npm --prefix client run dev
-```
-
-| | URL |
-|---|---|
-| 🖥️ **Client** | http://localhost:5173 |
-| ⚙️ **API** | http://localhost:8787 |
-| 📚 **API docs** | http://localhost:8787/docs |
-
-> Uvicorn runs **without** `--reload` — restart it after changing server code.
+> **Note**: `--no-deps` on `sam2` prevents dependency conflicts with `opencv-python-headless`.
 
 </details>
 
 ---
 
 ## 🏗️ Architecture
-
-**TL;DR — React SPA ⇄ FastAPI ⇄ SQLite + a folder of PNGs. Providers and ML models are pluggable and all optional.**
-
-<details>
-<summary><b>System diagram</b></summary>
-
-<br/>
 
 ```mermaid
 graph TB
@@ -330,14 +223,14 @@ graph TB
         FS["storage/projects/…<br/><i>domain-mirrored tree</i>"]
     end
 
-    subgraph ext["🌐 External"]
+    subgraph ext["🌐 External Providers"]
         AG["Antigravity CLI"]
         HF["Higgsfield CLI"]
         GM["Gemini REST"]
         CL["Claude CLI"]
     end
 
-    subgraph ml["🧠 Local models — optional"]
+    subgraph ml["🧠 Local ML Models (Optional)"]
         SAM["HQ-SAM / SAM2"]
         LAMA["LaMa inpainting"]
         ESR["Real-ESRGAN (ONNX)"]
@@ -362,32 +255,27 @@ graph TB
     style U fill:#2b2233,stroke:#8a4fd6,color:#eef0f2
 ```
 
-</details>
-
 <details>
-<summary><b>Stack choices and why</b></summary>
+<summary><b>🛠️ Technology Stack Decisions & Rationale</b></summary>
 
 <br/>
 
-| Layer | Choice | Why |
+| Layer | Choice | Rationale |
 |---|---|---|
-| **API** | FastAPI + Uvicorn | Async SSE streaming for long generation jobs |
-| **ORM** | SQLAlchemy 2.0 (typed `Mapped[...]`) | Self-migrating on boot — see `main.py:_migrate` |
-| **DB** | SQLite, single file | Local-first; the whole app is one folder you can zip |
-| **UI** | React 19 + Vite 8 + TypeScript 6 | No component library — hand-rolled dark UI |
-| **Imaging** | Pillow · NumPy · OpenCV · scikit-image · SciPy · PyMatting | The non-optional core; all classical, all offline |
-| **Segmentation** | HQ-SAM (`vit_tiny`), GrabCut fallback | HQ-SAM's high-quality token fixes thin/hollow shapes |
-| **Inpainting** | LaMa, classical fallback | Lifts icons and text off a frame |
-| **Upscaling** | Real-ESRGAN via ONNX | Avoids the `basicsr` stack's old torch pin |
-| **Lint** | oxlint | Fast; zero-config |
+| **API** | FastAPI + Uvicorn | Async SSE streaming for long generation tasks |
+| **ORM** | SQLAlchemy 2.0 | Typed mappings (`Mapped[...]`), self-migrating schema |
+| **Database** | SQLite | Zero-config, single-file local database |
+| **Frontend** | React 19 + Vite 8 + TS | Hand-crafted modern dark-mode interface |
+| **Core Imaging** | Pillow, OpenCV, NumPy, SciPy | Offline, deterministic processing primitives |
+| **Segmentation** | HQ-SAM (`vit_tiny`), GrabCut | High-quality token preserves fine details and thin geometry |
+| **Inpainting** | LaMa | Clean background restoration after lifting text/icons |
+| **Upscaling** | Real-ESRGAN (ONNX) | Fast execution without heavy legacy dependencies |
 
 </details>
 
 ---
 
-## 🔄 The six-step pipeline
-
-**TL;DR — Screen → Elements → Build → Text → Polish → Result. Each step is resumable and shows live progress.**
+## 🔄 The 6-Step Pipeline
 
 ```mermaid
 flowchart LR
@@ -401,94 +289,68 @@ flowchart LR
     style S6 fill:#2b2233,stroke:#8a4fd6,color:#eef0f2
 ```
 
-| Step | What it does |
+| Step | Purpose |
 |---|---|
-| **1 · Screen** | Upload a screenshot, or generate one from a prompt |
-| **2 · Elements** | Detect every reusable piece, and split the ones holding others |
-| **3 · Build** | Cut each element into the asset library |
-| **4 · Text** | Keep / Remove / Extract each caption |
-| **5 · Polish** | Upscale and clean edges |
-| **6 · Result** | Compare against the original, score it, export |
+| **1 · Screen** | Import or generate a screen mockup for analysis. |
+| **2 · Elements** | Detect reusable UI elements and sub-components via Vision LLM + OpenCV. |
+| **3 · Build** | Cut elements into assets, matching against existing domain items. |
+| **4 · Text** | Choose whether to keep, erase, or extract text into re-renderable labels. |
+| **5 · Polish** | Perform Real-ESRGAN upscaling and edge refitting. |
+| **6 · Result** | Score reconstruction fidelity against the original screenshot and export to Unity. |
 
 <details>
-<summary><b>📸 Walk through it with screenshots</b></summary>
+<summary><b>📸 Visual Step-by-Step Walkthrough</b></summary>
 
 <br/>
 
-### 1 · Screen — pick or make the screen to break down
-
+### 1 · Screen — Select screen source
 <img src="docs/screenshots/03-screens.png" alt="Screen selection" width="100%"/>
 
-Each screen tracks how many elements it has and how many are built.
-
-### 2 · Elements — find every reusable piece
-
+### 2 · Elements — Detect elements & snap bounding boxes
 <img src="docs/screenshots/07-elements.png" alt="Element detection" width="100%"/>
+A vision LLM proposes bounding candidates; OpenCV snaps each edge to the nearest strong gradient. Hand-editable box boundaries allow interactive fine-tuning.
 
-A vision LLM proposes candidate boxes; OpenCV then snaps each **edge** independently to the
-nearest strong gradient, and NMS drops the duplicates. On the lobby above that's 27 candidates
-→ 26 snapped boxes → 15 regions + 11 text labels. Boxes are fully hand-editable — drag to add,
-drag a handle to resize, arrows to nudge.
-
-**Splitting** runs as the back half of detection rather than as its own step: "what are the
-elements here" and "which of these hold others" are the same question at a different grain.
-
-### 3 · Build — cut each element into the asset library
-
+### 3 · Build — Extract components into the asset library
 <img src="docs/screenshots/08-build.png" alt="Build step" width="100%"/>
+Interactive approval surfaces existing matching assets in the domain to prevent duplicates.
 
-The original shows faintly behind what has been cut so far, so gaps are obvious. Anything that
-matches an asset already in this domain (or a parent domain) surfaces a **reuse approval**
-before it's swapped in.
+### 4 · Text — Handle text captions
+Text is separated into data representations (`MockupLabel`) rather than hard-baking pixels into sprites, enabling clean localizable rendering in Unity.
 
-### 4 · Text — decide what happens to the lettering
+### 5 · Polish — Cosmetic refinement
+Runs Real-ESRGAN upscaling and edge anti-aliasing passes.
 
-Text is deliberately **not** baked into a sprite. A PLAY button with `PLAY` painted on can only
-ever say PLAY, and the glyphs stretch when the frame is 9-sliced. Each caption gets its own choice:
-
-| Choice | What happens |
-|---|---|
-| **Keep** | Lettering stays baked in as drawn — free, no provider call |
-| **Remove** | Inpainted off the frame; survives as a `MockupLabel` row for Unity to re-render with a real font |
-| **Extract** | Inpainted off *and* redrawn as its own sprite, layered back over the parent |
-
-### 5 · Polish — cosmetic upscale and edge cleanup
-
-One element or all of them, through Real-ESRGAN plus an LLM-guided touch-up pass.
-
-### 6 · Result — compare, score and export
-
+### 6 · Result — Compare score & export
 <img src="docs/screenshots/10-result.png" alt="Result comparison" width="100%"/>
-
-A drag-handle wipe between the original screenshot and the screen rebuilt purely from your
-extracted sprites, with a **screen match score** underneath (quality × completeness).
+Provides a live visual slider comparing the original mockup against the rebuilt screen, along with an automated fidelity score.
 
 </details>
 
 ---
 
-## 🔬 How extraction works
+## 🔬 Extraction Engine
 
-**TL;DR — segment with HQ-SAM, matte the edges with alpha matting, then grow the box only if it was clipping. Order matters more than any single stage.**
+The core pipeline uses box-prompted **HQ-SAM**, followed by closed-form **alpha matting** and dynamic bounding box growth.
 
 <details>
-<summary><b>The three stages</b></summary>
+<summary><b>📐 Algorithmic Details & Implementation Notes</b></summary>
 
 <br/>
 
+### Segmentation & Matting Pipeline
+
 ```mermaid
 flowchart TB
-    A["📱 Source screenshot<br/><i>supersampled once, cached</i>"]
-    A --> B["1️⃣ Segment"]
+    A["📱 Source screenshot<br/><i>supersampled & cached</i>"] --> B["1️⃣ Segment"]
     B --> B1["HQ-SAM, box-prompted"]
-    B --> B2["GrabCut fallback<br/><i>offline, no model</i>"]
+    B --> B2["GrabCut fallback<br/><i>offline, classical</i>"]
     B1 & B2 --> C["2️⃣ Matte"]
-    C --> C1["Trimap from the mask"]
+    C --> C1["Trimap from mask"]
     C1 --> C2["Closed-form alpha matting"]
     C2 --> C3["Germer multi-level<br/>foreground estimation"]
-    C3 --> D["3️⃣ Grow, if the box clipped"]
-    D --> D1["Always grows from the<br/><i>original</i> detect_rect"]
-    D1 --> E["✅ Transparent PNG<br/><i>+ fidelity score</i>"]
+    C3 --> D["3️⃣ Grow (if clipped)"]
+    D --> D1["Anchored to original detect_rect"]
+    D1 --> E["✅ Transparent PNG<br/><i>+ fidelity metrics</i>"]
 
     style A fill:#2a3550,stroke:#6c8cff,color:#eef0f2
     style B fill:#1f3d2b,stroke:#3fb950,color:#eef0f2
@@ -497,53 +359,25 @@ flowchart TB
     style E fill:#2b2233,stroke:#8a4fd6,color:#eef0f2
 ```
 
-</details>
+### Key Technical Insights
 
-<details>
-<summary><b>Three decisions that make or break it</b></summary>
-
-<br/>
-
-**Why HQ-SAM leads.** It is measurably better on the case that defines this problem — a small
-element drawn *on* a large flat one. GrabCut's definite-foreground seed is an inset *rectangle*,
-so on a narrow diagonal object that seed is mostly the frame underneath; its colour model learns
-the frame, and the frame comes back inside the mask. Concretely: the PLAY button's sword
-segments at **48% coverage carrying a slab of blue** under GrabCut, against HQ-SAM's **29.5% of
-sword and nothing else**.
-
-**Why background samples come from *outside* the box.** A detected region box is a *tight* bound,
-so the element's own border sits right at the box edge. Seeding any part of the box interior as
-background teaches the segmenter that the border is background — and it cuts the frame off,
-leaving a PLAY button with no gold bevel.
-
-**Why the grow stage anchors to the original rect.** Extraction may widen a box that was clipping
-its element. If it grew from the *last grown result*, every rebuild would grow the already-grown
-box again, and boxes would creep outward until they swallowed their neighbours.
-
-</details>
-
-<details>
-<summary><b>De-occlusion</b></summary>
-
-<br/>
-
-An element in a screenshot arrives with whatever sat on top of it baked in — the PLAY button
-comes with its sword, the nav bar with its five icons, the profile banner with the avatar
-capping its end. Faithful, but not *reusable*. `processing/inpaint.py` masks the occluders and
-LaMa fills what was underneath, so the frame comes out empty and ready to be filled with anything.
+- **HQ-SAM vs GrabCut**: HQ-SAM prevents background bleed on thin diagonal objects. Classical GrabCut seed boxes can accidentally capture background pixels inside narrow bounding boxes, leading to color corruption.
+- **Exterior Background Sampling**: Background seeds are sampled from *outside* the detected bounding rectangle to prevent trimming natural element borders and bevels.
+- **Anchored Grow Logic**: Box expansion anchors strictly to the original `detect_rect`, preventing iterative growth loops from swallowing neighboring UI elements.
+- **De-occlusion Inpainting**: `processing/inpaint.py` masks foreground occluders and leverages LaMa inpainting to reconstruct clean background frames.
 
 </details>
 
 ---
 
-## 🗃️ Data model
-
-**TL;DR — Project → Atlas (domain tree) → Asset → AssetVersion, plus Mockup → Region/Label for screens.**
+## 🗃️ Data Model & Storage
 
 <details>
-<summary><b>Entity relationship diagram</b></summary>
+<summary><b>🔍 Database Schema (ER Diagram) & Disk Layout</b></summary>
 
 <br/>
+
+### Database ER Diagram
 
 ```mermaid
 erDiagram
@@ -605,71 +439,32 @@ erDiagram
     }
 ```
 
-</details>
+### Storage Directory Structure
 
-<details>
-<summary><b>Four decisions worth knowing</b></summary>
-
-<br/>
-
-- **`fidelity` lives on the version, not the asset** — so an extracted `v2` can be scored against
-  a generated `v1` of the same element.
-- **`detect_rect` is preserved separately from the live box** — see the grow-stage note above.
-- **`force_rebuild`** distinguishes "just unbound by a hand edit" from "never had an asset".
-  Without it, build's reuse-by-name step matched a resized box straight back onto the very asset
-  the edit was meant to replace.
-- **Text is a row, not pixels** — `MockupLabel.text_mode` is per *caption*, not per element,
-  because one nav bar carries several captions that don't all want the same fate.
-
-</details>
-
----
-
-## 📁 Storage layout
-
-**TL;DR — files mirror the domain tree, one folder per asset. `storage/` is gitignored (~1 GB of generated art).**
-
-<details>
-<summary><b>The tree and its rules</b></summary>
-
-<br/>
-
-Defined in `server/app/layout.py`.
+Managed by `server/app/layout.py`:
 
 ```
 storage/
-├── app.db                                              SQLite, the whole database
+├── app.db                                              # SQLite main database file
 └── projects/<pid>/
-    ├── domains/<Domain>/<SubDomain>/<AssetName>/       every file that asset owns
-    ├── domains/_unassigned/<AssetName>/                assets in no domain
-    ├── mockups/<mockup_id>/                            screenshot + its crops
-    ├── refs/                                           project style references
-    ├── previews/, _work/                               throwaway, safe to sweep
-    └── runs/                                           run logs (progress.py)
+    ├── domains/<Domain>/<SubDomain>/<AssetName>/       # Asset source and versions
+    ├── domains/_unassigned/<AssetName>/                # Unassigned assets
+    ├── mockups/<mockup_id>/                            # Original screenshots & crops
+    ├── refs/                                           # Project style reference images
+    ├── previews/, _work/                               # Temporary working files
+    └── runs/                                           # Execution progress logs
 ```
 
-| Rule | |
-|---|---|
-| **Writing** | Always `storage.new_asset_path(db, asset, …)` — never `new_image_path` |
-| **Deleting** | Deleting an asset / domain / mockup / project deletes its files |
-| **Renaming** | Moves the files, via `layout.reconcile`, which recomputes the project and rewrites DB paths |
-| **Maintenance** | `python -m tools.migrate_storage` (dry run) · `--apply --prune` to sweep unreferenced files |
-| **Verification** | `python -m tools.test_storage_layout` — end-to-end move/delete checks against a running server |
+- **File Management**: Paths are generated via `storage.new_asset_path()`. Asset updates trigger directory reconciliations (`layout.reconcile`).
+- **Maintenance CLI**: `python -m tools.migrate_storage --apply --prune` cleans unreferenced storage artifacts.
 
 </details>
 
 ---
 
-## 🎮 Unity integration
+## 🎮 Unity Integration
 
-**TL;DR — export writes PNGs + `.import.json` sidecars and installs an editor script that builds one SpriteAtlas per domain.**
-
-<details>
-<summary><b>How export works</b></summary>
-
-<br/>
-
-<img src="docs/screenshots/04-export.png" alt="Unity export" width="100%"/>
+Exports raw PNG assets, `.import.json` sidecars, and automated Unity Editor C# scripts to streamline asset ingestion into Unity projects.
 
 ```mermaid
 flowchart LR
@@ -684,21 +479,14 @@ flowchart LR
     style F fill:#2b2233,stroke:#8a4fd6,color:#eef0f2
 ```
 
-The demo project in `unity-clashup/` has **60 sprites across 6 atlases** (Common, Lobby,
-Matchmaking, NavigationBar, Goblins, Undead) produced entirely by this pipeline.
-
-</details>
-
 <details>
-<summary><b>📸 Asset detail, settings and providers</b></summary>
+<summary><b>🖼️ Asset Detail UI & Unity Importer Screenshots</b></summary>
 
 <br/>
 
 <img src="docs/screenshots/11-asset-detail.png" alt="Asset detail" width="100%"/>
 
-The composed prompt (art style + type rules + your prompt), the full version history with the
-provider and model that made each one, and the sprite preview with trim / upscale / downscale /
-9-slice controls.
+Inspect composed prompts, version history, resolution parameters, PPU, and 9-slice borders directly in the editor interface.
 
 <table>
 <tr>
@@ -706,8 +494,8 @@ provider and model that made each one, and the sprite preview with trim / upscal
 <td width="50%"><img src="docs/screenshots/05-providers.png" alt="Providers"/></td>
 </tr>
 <tr>
-<td><b>Project settings</b> — art style, palette, reference images, and the Unity defaults every new asset inherits.</td>
-<td><b>Providers</b> — per-provider enable toggles. Switching one off makes the server refuse to generate with it.</td>
+<td><b>Project Settings</b> — Global default settings for Unity import, PPU, and texture filtering.</td>
+<td><b>Provider Controls</b> — Hard server-side toggles for API expenditure control.</td>
 </tr>
 </table>
 
@@ -715,28 +503,24 @@ provider and model that made each one, and the sprite preview with trim / upscal
 
 ---
 
-## 🧪 Tests, coverage & CI
+## 🧪 Testing & Quality Gates
 
-**TL;DR — 73 tests over the image algorithms. Every PR must keep the lines it touches ≥80% covered, or it can't merge.**
+The test suite covers the image-processing core, validating algorithms without requiring live ML models or cloud API keys.
 
 ```bash
-# from server/
+# Run test suite and measure coverage
+cd server
 pytest tests --cov --cov-report=term
 ```
 
 <details>
-<summary><b>What the tests cover, and what they don't</b></summary>
+<summary><b>📈 Coverage Breakdown & CI Patch Gate</b></summary>
 
 <br/>
 
-The 73 tests cover the image-processing algorithms — the part where a regression is invisible
-until it ships. They deliberately run **without** the ML stack: `app/ml.py` loads every model
-lazily and falls back to classical implementations, and the tests assert on whichever backend
-answered.
+### Module Coverage Matrix
 
-Coverage concentrates on the algorithms by design — the routers are thin HTTP wrappers over them.
-
-| Module | Coverage | |
+| Module | Coverage | Status |
 |---|---:|---|
 | `schemas.py` | 100% | ██████████ |
 | `processing/fidelity.py` | 97% | █████████▊ |
@@ -749,27 +533,9 @@ Coverage concentrates on the algorithms by design — the routers are thin HTTP 
 | `processing/composite.py` | 62% | ██████▏ |
 | `processing/inpaint.py` | 55% | █████▌ |
 | `routers/*` · `providers/*` | 0–46% | ▏ |
-| **Total** | **32%** | ███▏ |
+| **Total Core Engine** | **32%** | ███▏ |
 
-</details>
-
-<details>
-<summary><b>The fidelity harness</b></summary>
-
-<br/>
-
-Beyond unit tests, `tools/score_run.py` is the A/B instrument for pipeline changes. Every asset
-originates from a rectangle on a screenshot; that crop is ground truth. The harness renders the
-asset back into that rectangle exactly the way the compositor would — same 9-slice / contain /
-stretch math, reused from `composite.py` rather than reimplemented — and measures ΔE, SSIM,
-alpha IoU and coverage.
-
-</details>
-
-<details>
-<summary><b>What runs on every PR</b></summary>
-
-<br/>
+### CI Workflow Gate
 
 ```mermaid
 flowchart LR
@@ -788,43 +554,11 @@ flowchart LR
     style B fill:#3d2222,stroke:#d63a3a,color:#eef0f2
 ```
 
-**The gate runs locally, not in a SaaS.** `diff-cover` reads `coverage.xml`, intersects it with
-the diff against `origin/main`, and exits non-zero if the lines this PR added or changed under
-`server/app` are less than **80%** covered. That failure takes down the `server tests + coverage`
-check, which is a required status check — so the merge button stays grey. No third-party service
-sits in the critical path, and the same command runs locally:
+Every PR requires that newly added or modified lines in `server/app` maintain at least **80% patch test coverage**, enforced locally via `diff-cover`:
 
 ```bash
 pytest tests --cov --cov-report=xml && diff-cover coverage.xml --compare-branch=origin/main --fail-under=80
 ```
-
-Run it from `server/`. `coverage.xml`'s paths are relative to `server/app` (see
-[`server/.coveragerc`](server/.coveragerc)) and diff-cover resolves them against the working
-directory — from the repo root it silently matches nothing and always "passes".
-
-Configured in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and [`codecov.yml`](codecov.yml).
-
-</details>
-
-<details>
-<summary><b>⚠️ Codecov also needs its GitHub App installed</b></summary>
-
-<br/>
-
-`CODECOV_TOKEN` is set, so uploads succeed. But the `codecov/patch` and `codecov/project`
-**statuses** are posted by the Codecov GitHub App, not by the upload — without the app installed,
-the badge and PR statuses stay dark even though the data reaches Codecov.
-
-1. Install the app at [github.com/apps/codecov](https://github.com/apps/codecov) and grant it this repo
-2. Confirm both statuses appear on a PR
-3. Add them as required checks:
-
-```bash
-gh api -X PUT repos/AdielMag/2d-assets-pipeline/rulesets/20438319 --input .github/ruleset.json
-```
-
-[`.github/ruleset.json`](.github/ruleset.json) is the branch protection kept in-repo, so the
-rules are reviewable rather than living only in the GitHub UI.
 
 </details>
 
@@ -832,34 +566,21 @@ rules are reviewable rather than living only in the GitHub UI.
 
 ## 🤝 Contributing
 
-**TL;DR — `main` is protected, everything goes through a PR, and new code carries its own tests.**
-
-```bash
-git checkout -b my-change
-git push -u origin my-change
-gh pr create
-```
+1. Create a feature branch: `git checkout -b feature/my-improvement`
+2. Run local tests: `cd server && pytest tests`
+3. Check code formatting: `npm --prefix client run lint`
+4. Submit a pull request.
 
 <details>
-<summary><b>Merge requirements</b></summary>
+<summary><b>🔒 Branch Protection & Merge Policies</b></summary>
 
 <br/>
 
-| Gate | Rule |
+| Gate | Policy |
 |---|---|
-| ✅ `server tests + coverage` | 73 tests pass **and** patch coverage ≥ 80% |
-| ✅ `client typecheck + lint + build` | oxlint, `tsc -b`, `vite build` all clean |
-| 🚫 Force-push / deletion on `main` | Blocked outright |
-
-Approving reviews are **not** required — this is a single-maintainer repo and GitHub does not let
-you approve your own PR, so requiring one would make merging impossible. The status checks are
-the gate.
-
-The patch gate is the one that matters day to day: the historical total sits near 32% because the
-routers predate the test suite, and holding new work to that old average would just cement it.
-
-**Repository admins bypass the ruleset**, so the maintainer can merge without waiting for checks
-when a change obviously doesn't need them.
+| `server tests + coverage` | All unit tests pass & patch coverage ≥ 80% |
+| `client typecheck + lint + build` | `oxlint`, `tsc -b`, and `vite build` must pass cleanly |
+| `main` Branch Safety | Direct force-pushes and branch deletions are disabled |
 
 </details>
 
