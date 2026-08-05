@@ -1,0 +1,55 @@
+{
+  "_comment": [
+    "Branch ruleset for `main`, kept in the repo so the protection is reviewable and",
+    "reproducible instead of living only in the GitHub UI.",
+    "",
+    "This file is the TARGET state: it lists codecov/patch and codecov/project as required",
+    "status checks. They are NOT required on the live ruleset yet, because Codecov rejects",
+    "tokenless uploads and a required check that can never report blocks every merge",
+    "forever. Add the CODECOV_TOKEN secret first (see the README), confirm both statuses",
+    "actually post on a PR, then apply this file:",
+    "",
+    "  gh api -X PUT repos/AdielMag/2d-assets-pipeline/rulesets/20438319 --input .github/ruleset.json",
+    "",
+    "Until then the merge gate is the diff-cover step inside the `server tests + coverage`",
+    "job, which enforces the same 80% patch-coverage rule without a third-party service.",
+    "",
+    "required_approving_review_count is 0 on purpose: GitHub does not let you approve your",
+    "own pull request, so on a single-maintainer repo any higher number blocks every merge."
+  ],
+  "name": "Protect main",
+  "target": "branch",
+  "enforcement": "active",
+  "conditions": {
+    "ref_name": { "include": ["~DEFAULT_BRANCH"], "exclude": [] }
+  },
+  "bypass_actors": [],
+  "rules": [
+    { "type": "deletion" },
+    { "type": "non_fast_forward" },
+    {
+      "type": "pull_request",
+      "parameters": {
+        "required_approving_review_count": 0,
+        "dismiss_stale_reviews_on_push": true,
+        "require_code_owner_review": false,
+        "require_last_push_approval": false,
+        "required_review_thread_resolution": true,
+        "allowed_merge_methods": ["merge", "squash", "rebase"]
+      }
+    },
+    {
+      "type": "required_status_checks",
+      "parameters": {
+        "strict_required_status_checks_policy": true,
+        "do_not_enforce_on_create": false,
+        "required_status_checks": [
+          { "context": "server tests + coverage" },
+          { "context": "client typecheck + lint + build" },
+          { "context": "codecov/patch" },
+          { "context": "codecov/project" }
+        ]
+      }
+    }
+  ]
+}
