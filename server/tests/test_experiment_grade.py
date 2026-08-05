@@ -131,10 +131,18 @@ def test_text_remove_separates_erased_from_intact_by_a_usable_margin(tmp_path):
         return img
 
     def _font():
-        try:
-            return ImageFont.truetype("arialbd.ttf", 54)
-        except OSError:
-            return ImageFont.load_default()
+        # The caption has to actually fill its label box — see the docstring. Arial only
+        # exists on Windows, so a bare truetype("arialbd.ttf") fell through to
+        # `load_default()` on Linux CI, which is an ~11px bitmap font. That drew "PLAY" at a
+        # fraction of the box, which understates residue exactly the way this test is
+        # written to catch, and the margin collapsed to 0.05 against a required 0.1.
+        for name in ("arialbd.ttf", "DejaVuSans-Bold.ttf", "LiberationSans-Bold.ttf"):
+            try:
+                return ImageFont.truetype(name, 54)
+            except OSError:
+                continue
+        # Pillow >= 10.1 scales its built-in font, so this last resort is still 54px.
+        return ImageFont.load_default(size=54)
 
     def cut(img: Image.Image) -> Image.Image:
         rgba = img.convert("RGBA")
