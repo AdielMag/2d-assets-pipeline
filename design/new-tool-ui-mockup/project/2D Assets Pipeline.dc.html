@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#33383f;border-radius:5px}
+  textarea{font-family:inherit}
+</style>
+<script src="./image-slot.js"></script>
+</helmet>
+
+<div style="width:100vw;height:100vh;display:flex;background:#14161a;color:#e8eaed;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;overflow:hidden">
+
+  <!-- SIDEBAR -->
+  <div style="width:228px;flex-shrink:0;background:#191c21;border-right:1px solid #282d35;display:flex;flex-direction:column;padding:18px 12px">
+    <div style="display:flex;align-items:center;gap:10px;padding:2px 8px 18px;border-bottom:1px solid #282d35;margin-bottom:14px">
+      <div style="width:30px;height:30px;border-radius:8px;background:#6c8cff;flex-shrink:0;display:flex;align-items:center;justify-content:center">
+        <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="8" height="8" rx="1.5" fill="#14161a"></rect><rect x="7" y="7" width="8" height="8" rx="1.5" fill="#14161a" opacity="0.55"></rect></svg>
+      </div>
+      <div>
+        <div style="font-size:13.5px;font-weight:600;line-height:1.2">2D Assets Pipeline</div>
+        <div style="font-size:10.5px;color:#7d8590;line-height:1.2">local asset generator</div>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <div style="{{ navProjectsStyle }}" onClick="{{ goProjects }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"></rect><rect x="9" y="1.5" width="5.5" height="5.5" rx="1"></rect><rect x="1.5" y="9" width="5.5" height="5.5" rx="1"></rect><rect x="9" y="9" width="5.5" height="5.5" rx="1"></rect></svg>
+        <span>Projects</span>
+      </div>
+      <div style="{{ navSettingsStyle }}" onClick="{{ goSettings }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="2" y1="4" x2="14" y2="4"></line><circle cx="10" cy="4" r="1.6" fill="currentColor" stroke="none"></circle><line x1="2" y1="8" x2="14" y2="8"></line><circle cx="6" cy="8" r="1.6" fill="currentColor" stroke="none"></circle><line x1="2" y1="12" x2="14" y2="12"></line><circle cx="11.5" cy="12" r="1.6" fill="currentColor" stroke="none"></circle></svg>
+        <span>Project Settings</span>
+      </div>
+      <div style="{{ navAssetsStyle }}" onClick="{{ goAssets }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.5" y="1.5" width="13" height="13" rx="1.5"></rect><circle cx="5.5" cy="5.5" r="1.3" fill="currentColor" stroke="none"></circle><polyline points="2,12.5 6,8.5 9,11 12,7.5 14.5,10.5"></polyline></svg>
+        <span>Assets</span>
+      </div>
+      <div style="{{ navMockupStyle }}" onClick="{{ goMockup }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><polyline points="1.5,5 1.5,1.5 5,1.5"></polyline><polyline points="11,1.5 14.5,1.5 14.5,5"></polyline><polyline points="14.5,11 14.5,14.5 11,14.5"></polyline><polyline points="5,14.5 1.5,14.5 1.5,11"></polyline></svg>
+        <span>Mockup Workspace</span>
+      </div>
+      <div style="{{ navExportStyle }}" onClick="{{ goExport }}">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M8 10.5V1.8M8 1.8L5 4.8M8 1.8l3 3"></path><path d="M1.8 9.5v3.7a1 1 0 0 0 1 1h10.4a1 1 0 0 0 1-1V9.5"></path></svg>
+        <span>Export to Unity</span>
+      </div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <div style="background:#1e232a;border:1px solid #282d35;border-radius:9px;padding:11px 12px;display:flex;flex-direction:column;gap:7px">
+      <div style="font-size:10px;font-weight:600;color:#7d8590;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:1px">Providers</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#c3c9d1"><span style="width:6px;height:6px;border-radius:50%;background:#3ecf8e;flex-shrink:0"></span>OpenAI · connected</div>
+      <div style="display:flex;align-items:center;gap:7px;font-size:11.5px;color:#c3c9d1"><span style="width:6px;height:6px;border-radius:50%;background:#3ecf8e;flex-shrink:0"></span>Gemini · connected</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+    <div style="height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid #23272e">
+      <div style="display:flex;align-items:center;gap:8px;background:#1e232a;border:1px solid #2a2f37;border-radius:7px;padding:6px 12px;font-size:12.5px;font-weight:600">
+        Pixel Dungeon
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#7d8590" stroke-width="1.4"><polyline points="2,3.5 5,6.5 8,3.5"></polyline></svg>
+      </div>
+      <div style="width:28px;height:28px;border-radius:50%;background:#2c3340;border:1px solid #3a4048;flex-shrink:0"></div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:28px 34px 60px">
+
+    <!-- PROJECTS PAGE -->
+    <sc-if value="{{ isProjects }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <h1 style="font-size:20px;font-weight:600;margin:0">Projects</h1>
+        <div style="background:#6c8cff;color:#0e1116;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:7px;cursor:pointer" style-hover="background:#82a0ff">+ New Project</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px">
+        <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+          <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;overflow:hidden;cursor:pointer" style-hover="border-color:#3a4048" onClick="{{ p.open }}">
+            <image-slot id="{{ p.slotId }}" style="width:100%;height:130px;display:block" shape="rect" placeholder="Style reference"></image-slot>
+            <div style="padding:15px 16px">
+              <div style="font-size:14.5px;font-weight:600;margin-bottom:5px">{{ p.name }}</div>
+              <div style="font-size:12px;color:#9aa2ad;line-height:1.5;margin-bottom:11px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ p.style }}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px">
+                <sc-for list="{{ p.palette }}" as="c" hint-placeholder-count="4">
+                  <span style="width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,0.12);background:{{ c }}"></span>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#7d8590">
+                <span>{{ p.assets }} assets</span><span>{{ p.updated }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- SETTINGS PAGE -->
+    <sc-if value="{{ isSettings }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <h1 style="font-size:20px;font-weight:600;margin:0 0 3px">Project Settings</h1>
+          <div style="font-size:12.5px;color:#7d8590">Pixel Dungeon</div>
+        </div>
+        <div style="background:#6c8cff;color:#0e1116;font-size:12.5px;font-weight:600;padding:9px 18px;border-radius:7px;cursor:pointer" style-hover="background:#82a0ff">Save Changes</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:22px;align-items:start;min-width:0">
+        <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:22px;min-width:0">
+          <div style="font-size:13px;font-weight:600;margin-bottom:16px">Art Style</div>
+          <div style="font-size:11.5px;color:#7d8590;margin-bottom:6px">Style description</div>
+          <div style="border:1px solid #2a2f37;background:#14171b;border-radius:8px;padding:13px 14px;font-size:13px;line-height:1.65;color:#dfe2e6;margin-bottom:18px">Dark fantasy pixel art, 32px grid, desaturated stone &amp; earth palette with warm torch-lit highlights and soft rim lighting on edges. Consistent 1px outline on all foreground elements.</div>
+          <div style="font-size:11.5px;color:#7d8590;margin-bottom:8px">Palette</div>
+          <div style="display:flex;gap:14px;margin-bottom:20px">
+            <sc-for list="{{ paletteChips }}" as="c" hint-placeholder-count="5">
+              <div style="display:flex;flex-direction:column;align-items:center;gap:6px">
+                <div style="width:38px;height:38px;border-radius:9px;border:1px solid rgba(255,255,255,0.12);background:{{ c.hex }}"></div>
+                <div style="font-size:9.5px;color:#7d8590;font-family:ui-monospace,Menlo,monospace">{{ c.hex }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:11.5px;color:#7d8590;margin-bottom:8px">Reference images</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+            <image-slot id="ref-1" style="width:100%;aspect-ratio:1;border-radius:8px" shape="rounded" radius="8" placeholder="Ref"></image-slot>
+            <image-slot id="ref-2" style="width:100%;aspect-ratio:1;border-radius:8px" shape="rounded" radius="8" placeholder="Ref"></image-slot>
+            <image-slot id="ref-3" style="width:100%;aspect-ratio:1;border-radius:8px" shape="rounded" radius="8" placeholder="Ref"></image-slot>
+            <div style="width:100%;aspect-ratio:1;border-radius:8px;border:1.5px dashed #3a4048;display:flex;align-items:center;justify-content:center;color:#5a616b;font-size:22px;cursor:pointer" style-hover="border-color:#6c8cff;color:#6c8cff">+</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;min-width:0">
+          <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:22px;min-width:0">
+            <div style="font-size:13px;font-weight:600;margin-bottom:16px">Unity Integration</div>
+            <div style="font-size:11.5px;color:#7d8590;margin-bottom:6px">Unity project path</div>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <div style="flex:1;border:1px solid #2a2f37;background:#14171b;border-radius:7px;padding:9px 12px;font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#9aa2ad;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">/Users/dev/UnityProjects/PixelDungeon</div>
+              <div style="border:1px solid #2a2f37;background:#22262d;border-radius:7px;padding:9px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:#282d35">Browse</div>
+            </div>
+            <div style="font-size:11.5px;color:#7d8590;margin-bottom:8px">Default pixels per unit</div>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px">
+              <div style="width:30px;height:30px;border:1px solid #2a2f37;background:#22262d;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;user-select:none" style-hover="background:#282d35" onClick="{{ decPpu }}">–</div>
+              <div style="width:56px;text-align:center;font-size:14px;font-weight:600;font-family:ui-monospace,Menlo,monospace">{{ ppu }}</div>
+              <div style="width:30px;height:30px;border:1px solid #2a2f37;background:#22262d;border-radius:7px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;user-select:none" style-hover="background:#282d35" onClick="{{ incPpu }}">+</div>
+            </div>
+            <div style="font-size:11.5px;color:#7d8590;margin-bottom:8px">Default filter mode</div>
+            <div style="display:flex;gap:6px;margin-bottom:18px;min-width:0">
+              <div style="{{ filterPointStyle }}" onClick="{{ setFilterPoint }}">Point</div>
+              <div style="{{ filterBilinearStyle }}" onClick="{{ setFilterBilinear }}">Bilinear</div>
+            </div>
+            <div style="font-size:11.5px;color:#7d8590;margin-bottom:8px">Default wrap mode</div>
+            <div style="display:flex;gap:6px;min-width:0">
+              <div style="{{ wrapClampStyle }}" onClick="{{ setWrapClamp }}">Clamp</div>
+              <div style="{{ wrapRepeatStyle }}" onClick="{{ setWrapRepeat }}">Repeat</div>
+            </div>
+          </div>
+          <div style="font-size:11.5px;color:#5a616b;line-height:1.5;padding:0 4px">These defaults apply to new assets. Each asset can override PPU, filter mode and 9-slice borders individually in Asset Detail.</div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ASSETS PAGE -->
+    <sc-if value="{{ isAssets }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:16px">
+        <h1 style="font-size:20px;font-weight:600;margin:0;white-space:nowrap">Assets</h1>
+        <div style="flex:1;max-width:340px;display:flex;align-items:center;gap:8px;border:1px solid #282d35;background:#1b1f26;border-radius:7px;padding:8px 12px">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#7d8590" stroke-width="1.4"><circle cx="6" cy="6" r="4.3"></circle><line x1="9.2" y1="9.2" x2="13" y2="13"></line></svg>
+          <span style="font-size:12.5px;color:#5a616b">Search assets…</span>
+        </div>
+        <div style="background:#6c8cff;color:#0e1116;font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:7px;cursor:pointer;white-space:nowrap" style-hover="background:#82a0ff">+ New Asset</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="6">
+          <div style="{{ f.style }}" onClick="{{ f.onClick }}">
+            <sc-if value="{{ f.dot }}"><span style="width:7px;height:7px;border-radius:50%;background:{{ f.dot }};display:inline-block;margin-right:6px"></span></sc-if>{{ f.label }}
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(216px,1fr));gap:18px">
+        <sc-for list="{{ filteredAssets }}" as="a" hint-placeholder-count="6">
+          <div style="background:#1b1f26;border:1px solid #282d35;border-radius:11px;overflow:hidden;cursor:pointer" style-hover="border-color:#3a4048" onClick="{{ a.open }}">
+            <div style="position:relative;height:140px;background-image:linear-gradient(45deg,#20242b 25%,transparent 25%),linear-gradient(-45deg,#20242b 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#20242b 75%),linear-gradient(-45deg,transparent 75%,#20242b 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#181b21">
+              <image-slot id="{{ a.slotId }}" style="width:100%;height:100%" shape="rect" placeholder="Preview"></image-slot>
+              <div style="position:absolute;top:8px;left:8px;display:flex;align-items:center;gap:5px;background:rgba(20,22,26,0.82);border-radius:5px;padding:3px 8px;font-size:10px;font-weight:600;pointer-events:none">
+                <span style="width:6px;height:6px;border-radius:50%;background:{{ a.dot }}"></span>{{ a.typeLabel }}
+              </div>
+              <div style="position:absolute;top:8px;right:8px;background:rgba(20,22,26,0.82);border-radius:5px;padding:3px 7px;font-size:10px;font-weight:600;color:#9aa2ad;pointer-events:none">v{{ a.versions }}</div>
+            </div>
+            <div style="padding:12px 14px">
+              <div style="font-size:13.5px;font-weight:600;margin-bottom:3px">{{ a.name }}</div>
+              <div style="font-size:11px;color:#7d8590">{{ a.updated }}</div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <!-- ASSET DETAIL PAGE -->
+    <sc-if value="{{ isDetail }}">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+        <div style="width:30px;height:30px;border-radius:7px;border:1px solid #282d35;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#22262d" onClick="{{ goAssets }}">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#c3c9d1" stroke-width="1.5"><polyline points="8.5,2 3.5,7 8.5,12"></polyline></svg>
+        </div>
+        <h1 style="font-size:18px;font-weight:600;margin:0">{{ detailAsset.name }}</h1>
+        <div style="display:flex;align-items:center;gap:5px;background:#1e232a;border:1px solid #282d35;border-radius:5px;padding:4px 9px;font-size:11px;font-weight:600"><span style="width:6px;height:6px;border-radius:50%;background:{{ detailAsset.dot }}"></span>{{ detailAsset.typeLabel }}</div>
+        <div style="font-size:11.5px;color:#5a616b;font-family:ui-monospace,Menlo,monospace">{{ detailAsset.path }}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;align-items:start">
+
+        <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:20px;display:flex;flex-direction:column;gap:14px">
+          <div style="font-size:12.5px;font-weight:600">Composed Prompt</div>
+          <div style="border:1px solid #2a2f37;background:#14171b;border-radius:8px;padding:12px 13px;font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1.7;max-height:200px;overflow-y:auto">
+            <div style="color:#5a616b">// art style</div>
+            <div style="color:#8b93a0;margin-bottom:8px">Dark fantasy pixel art, 32px grid, desaturated stone &amp; earth palette with torch-lit highlights.</div>
+            <div style="color:#5a616b">// type rules — {{ detailAsset.typeLabel }}</div>
+            <div style="color:#8b93a0;margin-bottom:8px">Blank UI element, no text or labels unless explicitly requested. Isolated on transparent background, uniform edges suitable for 9-slice scaling.</div>
+            <div style="color:#5a616b">// user prompt</div>
+            <div style="color:#dfe2e6">Rounded rectangular button, carved stone texture with a faint mossy-green glow along the top edge.</div>
+          </div>
+          <div style="font-size:11.5px;color:#7d8590">Your prompt</div>
+          <div style="border:1px solid #2a2f37;background:#14171b;border-radius:8px;padding:11px 13px;font-size:12.5px;line-height:1.6;color:#dfe2e6;min-height:56px">Rounded rectangular button, carved stone texture with a faint mossy-green glow along the top edge.</div>
+          <div style="font-size:11.5px;color:#7d8590">Provider</div>
+          <div style="display:flex;gap:6px">
+            <div style="{{ providerOpenaiStyle }}" onClick="{{ setProviderOpenai }}">OpenAI</div>
+            <div style="{{ providerGeminiStyle }}" onClick="{{ setProviderGemini }}">Gemini</div>
+          </div>
+          <div style="font-size:11px;color:#7d8590;line-height:1.5">{{ providerNote }}</div>
+          <div style="background:#6c8cff;color:#0e1116;font-size:13px;font-weight:700;padding:11px;border-radius:8px;text-align:center;cursor:pointer;margin-top:4px" style-hover="background:#82a0ff">⚡ Generate</div>
+        </div>
+
+        <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:20px">
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:14px">Versions · {{ versions.length }}</div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <sc-for list="{{ versions }}" as="v" hint-placeholder-count="3">
+              <div style="{{ v.rowStyle }}" onClick="{{ v.select }}">
+                <div style="position:relative;width:60px;height:60px;border-radius:7px;flex-shrink:0;background-image:linear-gradient(45deg,#20242b 25%,transparent 25%),linear-gradient(-45deg,#20242b 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#20242b 75%),linear-gradient(-45deg,transparent 75%,#20242b 75%);background-size:14px 14px;background-position:0 0,0 7px,7px -7px,-7px 0;background-color:#181b21;overflow:hidden">
+                  <image-slot id="{{ v.slotId }}" style="width:100%;height:100%" shape="rect" placeholder=""></image-slot>
+                </div>
+                <div style="flex:1">
+                  <div style="font-size:12px;font-weight:600;margin-bottom:3px">{{ v.provider }}</div>
+                  <div style="font-size:10.5px;color:#7d8590">{{ v.time }}</div>
+                </div>
+                <div style="{{ v.radioStyle }}"></div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+            <div style="font-size:12.5px;font-weight:600">9-Slice Borders</div>
+            <div style="font-size:10.5px;font-weight:600;color:#6c8cff;border:1px solid #2a3a5c;background:rgba(108,140,255,0.08);border-radius:5px;padding:4px 8px;cursor:pointer">Auto-detect</div>
+          </div>
+          <div ref="{{ nsRef }}" style="position:relative;width:100%;aspect-ratio:4/3;border-radius:8px;overflow:hidden;background-image:linear-gradient(45deg,#20242b 25%,transparent 25%),linear-gradient(-45deg,#20242b 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#20242b 75%),linear-gradient(-45deg,transparent 75%,#20242b 75%);background-size:16px 16px;background-position:0 0,0 8px,8px -8px,-8px 0;background-color:#181b21;touch-action:none;margin-bottom:12px">
+            <image-slot id="detail-nineslice" style="width:100%;height:100%" shape="rect" placeholder="Button"></image-slot>
+            <div style="position:absolute;top:0;bottom:0;width:2px;background:#6c8cff;cursor:ew-resize;left:{{ ns.l }}%" onPointerDown="{{ onGuideDown_l }}" onPointerMove="{{ onGuideMove }}" onPointerUp="{{ onGuideUp }}"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#6c8cff;border:2px solid #14161a"></div></div>
+            <div style="position:absolute;top:0;bottom:0;width:2px;background:#6c8cff;cursor:ew-resize;left:{{ ns.r }}%" onPointerDown="{{ onGuideDown_r }}" onPointerMove="{{ onGuideMove }}" onPointerUp="{{ onGuideUp }}"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#6c8cff;border:2px solid #14161a"></div></div>
+            <div style="position:absolute;left:0;right:0;height:2px;background:#6c8cff;cursor:ns-resize;top:{{ ns.t }}%" onPointerDown="{{ onGuideDown_t }}" onPointerMove="{{ onGuideMove }}" onPointerUp="{{ onGuideUp }}"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#6c8cff;border:2px solid #14161a"></div></div>
+            <div style="position:absolute;left:0;right:0;height:2px;background:#6c8cff;cursor:ns-resize;top:{{ ns.b }}%" onPointerDown="{{ onGuideDown_b }}" onPointerMove="{{ onGuideMove }}" onPointerUp="{{ onGuideUp }}"><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:12px;height:12px;border-radius:50%;background:#6c8cff;border:2px solid #14161a"></div></div>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:16px">
+            <div style="flex:1;text-align:center;background:#14171b;border:1px solid #2a2f37;border-radius:6px;padding:5px 0;font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:#9aa2ad">L {{ ns.lRound }}</div>
+            <div style="flex:1;text-align:center;background:#14171b;border:1px solid #2a2f37;border-radius:6px;padding:5px 0;font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:#9aa2ad">T {{ ns.tRound }}</div>
+            <div style="flex:1;text-align:center;background:#14171b;border:1px solid #2a2f37;border-radius:6px;padding:5px 0;font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:#9aa2ad">R {{ ns.rRound }}</div>
+            <div style="flex:1;text-align:center;background:#14171b;border:1px solid #2a2f37;border-radius:6px;padding:5px 0;font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:#9aa2ad">B {{ ns.bRound }}</div>
+          </div>
+          <div style="font-size:11px;color:#7d8590;margin-bottom:10px">Live stretch preview · corners fixed, edges &amp; center stretch</div>
+          <div style="display:flex;align-items:flex-end;gap:14px">
+            <div style="display:grid;grid-template-columns:8px 1fr 8px;grid-template-rows:8px 1fr 8px;width:64px;height:32px;border-radius:5px;overflow:hidden;border:1px solid #3a4048">
+              <div style="grid-column:1/2;grid-row:1/2;background:#4a5568"></div><div style="grid-column:2/3;grid-row:1/2;background:#5b6474"></div><div style="grid-column:3/4;grid-row:1/2;background:#4a5568"></div>
+              <div style="grid-column:1/2;grid-row:2/3;background:#5b6474"></div><div style="grid-column:2/3;grid-row:2/3;background:linear-gradient(180deg,rgba(108,140,255,0.18),rgba(108,140,255,0.04))"></div><div style="grid-column:3/4;grid-row:2/3;background:#5b6474"></div>
+              <div style="grid-column:1/2;grid-row:3/4;background:#4a5568"></div><div style="grid-column:2/3;grid-row:3/4;background:#5b6474"></div><div style="grid-column:3/4;grid-row:3/4;background:#4a5568"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:11px 1fr 11px;grid-template-rows:11px 1fr 11px;width:110px;height:46px;border-radius:6px;overflow:hidden;border:1px solid #3a4048">
+              <div style="grid-column:1/2;grid-row:1/2;background:#4a5568"></div><div style="grid-column:2/3;grid-row:1/2;background:#5b6474"></div><div style="grid-column:3/4;grid-row:1/2;background:#4a5568"></div>
+              <div style="grid-column:1/2;grid-row:2/3;background:#5b6474"></div><div style="grid-column:2/3;grid-row:2/3;background:linear-gradient(180deg,rgba(108,140,255,0.18),rgba(108,140,255,0.04))"></div><div style="grid-column:3/4;grid-row:2/3;background:#5b6474"></div>
+              <div style="grid-column:1/2;grid-row:3/4;background:#4a5568"></div><div style="grid-column:2/3;grid-row:3/4;background:#5b6474"></div><div style="grid-column:3/4;grid-row:3/4;background:#4a5568"></div>
+            </div>
+            <div style="display:grid;grid-template-columns:15px 1fr 15px;grid-template-rows:15px 1fr 15px;width:190px;height:70px;border-radius:8px;overflow:hidden;border:1px solid #3a4048">
+              <div style="grid-column:1/2;grid-row:1/2;background:#4a5568"></div><div style="grid-column:2/3;grid-row:1/2;background:#5b6474"></div><div style="grid-column:3/4;grid-row:1/2;background:#4a5568"></div>
+              <div style="grid-column:1/2;grid-row:2/3;background:#5b6474"></div><div style="grid-column:2/3;grid-row:2/3;background:linear-gradient(180deg,rgba(108,140,255,0.18),rgba(108,140,255,0.04))"></div><div style="grid-column:3/4;grid-row:2/3;background:#5b6474"></div>
+              <div style="grid-column:1/2;grid-row:3/4;background:#4a5568"></div><div style="grid-column:2/3;grid-row:3/4;background:#5b6474"></div><div style="grid-column:3/4;grid-row:3/4;background:#4a5568"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- MOCKUP WORKSPACE -->
+    <sc-if value="{{ isMockup }}">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+        <h1 style="font-size:20px;font-weight:600;margin:0">Mockup Workspace</h1>
+        <div style="display:flex;gap:8px">
+          <div style="border:1px solid #2a2f37;background:#22262d;color:#dfe2e6;font-size:12.5px;font-weight:600;padding:9px 15px;border-radius:7px;cursor:pointer" style-hover="background:#282d35">Upload Image</div>
+          <div style="background:#6c8cff;color:#0e1116;font-size:12.5px;font-weight:700;padding:9px 15px;border-radius:7px;cursor:pointer" style-hover="background:#82a0ff">Generate Mockup</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.7fr 1fr;gap:20px;align-items:start">
+        <div>
+          <div style="position:relative;width:100%;aspect-ratio:16/10;border-radius:12px;overflow:hidden;border:1px solid #282d35">
+            <image-slot id="mockup-canvas" style="width:100%;height:100%" shape="rect" placeholder="Drop or generate a screen mockup"></image-slot>
+            <sc-for list="{{ regions }}" as="r" hint-placeholder-count="4">
+              <div style="{{ r.boxStyle }}" onClick="{{ r.select }}">
+                <div style="{{ r.tagStyle }}">{{ r.name }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-size:11.5px;color:#5a616b;font-style:italic;margin-top:10px">Click a region to inspect it, or drag on the canvas to draw a new one.</div>
+        </div>
+        <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:18px">
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:12px">Regions · {{ regions.length }}</div>
+          <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px">
+            <sc-for list="{{ regions }}" as="r" hint-placeholder-count="4">
+              <div style="{{ r.rowStyle }}" onClick="{{ r.select }}">
+                <span style="width:8px;height:8px;border-radius:2px;background:{{ r.color }};flex-shrink:0"></span>
+                <span style="flex:1;font-size:12.5px">{{ r.name }}</span>
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="#5a616b" stroke-width="1.4"><polyline points="3.5,1.5 7,5 3.5,8.5"></polyline></svg>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border-top:1px solid #282d35;padding-top:16px">
+            <div style="display:flex;gap:12px;margin-bottom:14px">
+              <image-slot id="{{ selectedRegion.cropSlotId }}" style="width:70px;height:70px;border-radius:8px;flex-shrink:0" shape="rounded" radius="8" placeholder="Crop"></image-slot>
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:3px">{{ selectedRegion.name }}</div>
+                <div style="font-size:11px;color:#7d8590">Reference crop from mockup</div>
+              </div>
+            </div>
+            <div style="font-size:11.5px;color:#7d8590;margin-bottom:6px">Auto-drafted prompt</div>
+            <div style="border:1px solid #2a2f37;background:#14171b;border-radius:8px;padding:11px 12px;font-size:12px;line-height:1.6;color:#dfe2e6;margin-bottom:14px">{{ selectedRegion.prompt }}</div>
+            <div style="display:flex;gap:6px;margin-bottom:14px">
+              <div style="{{ providerOpenaiStyleSm }}" onClick="{{ setProviderOpenai }}">OpenAI</div>
+              <div style="{{ providerGeminiStyleSm }}" onClick="{{ setProviderGemini }}">Gemini</div>
+            </div>
+            <div style="background:#6c8cff;color:#0e1116;font-size:12.5px;font-weight:700;padding:10px;border-radius:8px;text-align:center;cursor:pointer" style-hover="background:#82a0ff">Generate Asset →</div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- EXPORT PAGE -->
+    <sc-if value="{{ isExport }}">
+      <div style="margin-bottom:20px">
+        <h1 style="font-size:20px;font-weight:600;margin:0 0 3px">Export to Unity</h1>
+        <div style="font-size:12.5px;color:#7d8590">Pixel Dungeon</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:22px;align-items:start">
+        <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:20px">
+          <div style="font-size:12.5px;font-weight:600;margin-bottom:14px">Select Assets · {{ selectedCount }} of {{ exportAssets.length }}</div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <sc-for list="{{ exportAssets }}" as="a" hint-placeholder-count="6">
+              <div style="{{ a.rowStyle }}" onClick="{{ a.toggle }}">
+                <div style="{{ a.checkStyle }}">{{ a.checkMark }}</div>
+                <div style="width:38px;height:38px;border-radius:6px;background-image:linear-gradient(45deg,#20242b 25%,transparent 25%),linear-gradient(-45deg,#20242b 25%,transparent 25%);background-size:10px 10px;background-color:#181b21;flex-shrink:0"></div>
+                <div style="flex:1">
+                  <div style="font-size:12.5px;font-weight:600">{{ a.name }}</div>
+                  <div style="font-size:10.5px;color:#7d8590">{{ a.typeLabel }} · v{{ a.versions }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:20px">
+            <div style="font-size:12.5px;font-weight:600;margin-bottom:12px">Unity Export</div>
+            <div style="font-size:11px;color:#7d8590;margin-bottom:5px">Unity project path</div>
+            <div style="border:1px solid #2a2f37;background:#14171b;border-radius:7px;padding:8px 11px;font-size:11.5px;font-family:ui-monospace,Menlo,monospace;color:#9aa2ad;margin-bottom:14px">/Users/dev/UnityProjects/PixelDungeon</div>
+            <div style="font-size:11px;color:#7d8590;margin-bottom:6px">Output layout</div>
+            <div style="border:1px solid #2a2f37;background:#14171b;border-radius:7px;padding:11px 12px;font-size:11px;font-family:ui-monospace,Menlo,monospace;line-height:1.75;color:#8b93a0;margin-bottom:16px">Assets/<br>├─ UI/PlayButton.png<br>├─ UI/PlayButton.import.json<br>├─ Icons/HealthPotion.png<br>└─ Tiles/StoneFloor.png</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid #2a2f37;border-radius:8px;padding:10px 12px;margin-bottom:16px">
+              <span style="font-size:12px">AssetPipelineImporter.cs</span>
+              <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#3ecf8e"><span style="width:6px;height:6px;border-radius:50%;background:#3ecf8e"></span>Installed</div>
+            </div>
+            <div style="background:#6c8cff;color:#0e1116;font-size:13px;font-weight:700;padding:11px;border-radius:8px;text-align:center;cursor:pointer" style-hover="background:#82a0ff">Export {{ selectedCount }} Selected Assets →</div>
+          </div>
+          <div style="background:#1b1f26;border:1px solid #282d35;border-radius:12px;padding:18px">
+            <div style="font-size:12px;font-weight:600;margin-bottom:10px">PlayButton.import.json</div>
+            <div style="border:1px solid #2a2f37;background:#14171b;border-radius:8px;padding:12px 13px;font-family:ui-monospace,Menlo,monospace;font-size:11px;line-height:1.8">
+              <div>{ </div>
+              <div>&nbsp;&nbsp;<span style="color:#6c8cff">"pixelsPerUnit"</span>: <span style="color:#f5a623">100</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:#6c8cff">"spriteBorder"</span>: [<span style="color:#f5a623">22, 26, 22, 26</span>],</div>
+              <div>&nbsp;&nbsp;<span style="color:#6c8cff">"spriteMode"</span>: <span style="color:#3ecf8e">"Sliced"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:#6c8cff">"filterMode"</span>: <span style="color:#3ecf8e">"Point"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:#6c8cff">"wrapMode"</span>: <span style="color:#3ecf8e">"Clamp"</span>,</div>
+              <div>&nbsp;&nbsp;<span style="color:#6c8cff">"meshType"</span>: <span style="color:#3ecf8e">"FullRect"</span></div>
+              <div>}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    </div>
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const PROJECTS = [
+  {id:'p1', name:'Pixel Dungeon', style:'Dark fantasy pixel art, 32px grid, desaturated stone & earth palette with torch-lit highlights.', assets:24, updated:'Updated 2h ago', palette:['#1b2a3d','#6b6f76','#e08a3c','#5c7a4f']},
+  {id:'p2', name:'Neon Runner', style:'Retro synthwave vector UI, glow edges, magenta/cyan palette on near-black.', assets:12, updated:'Updated 3d ago', palette:['#101018','#ff3ea5','#33e5ff','#7b5bff']},
+  {id:'p3', name:'Cozy Farm', style:'Soft painterly 2D, warm pastel palette, rounded shapes, gentle outlines.', assets:31, updated:'Updated 1w ago', palette:['#fbe3c2','#f3a583','#9fc490','#f6d365']},
+];
+const PALETTE_CHIPS = ['#1b2a3d','#6b6f76','#e08a3c','#5c7a4f','#8c3b3b'];
+const TYPE_LABEL = {ui_element:'UI Element', icon:'Icon', sprite:'Sprite', tile:'Tile', sprite_sheet:'Sprite Sheet'};
+const TYPE_DOT = {ui_element:'#6c8cff', icon:'#2dd4bf', sprite:'#c084fc', tile:'#f5a623', sprite_sheet:'#f472b6'};
+const TYPE_FOLDER = {ui_element:'UI', icon:'Icons', sprite:'Sprites', tile:'Tiles', sprite_sheet:'SpriteSheets'};
+const ASSETS = [
+  {id:'a1', name:'Play Button', type:'ui_element', versions:3, updated:'2h ago'},
+  {id:'a2', name:'Health Potion Icon', type:'icon', versions:2, updated:'1d ago'},
+  {id:'a3', name:'Goblin Idle Sprite', type:'sprite', versions:1, updated:'3d ago'},
+  {id:'a4', name:'Stone Floor Tile', type:'tile', versions:4, updated:'5h ago'},
+  {id:'a5', name:'Coin Spin Sheet', type:'sprite_sheet', versions:1, updated:'6d ago'},
+  {id:'a6', name:'Settings Panel BG', type:'ui_element', versions:2, updated:'1d ago'},
+];
+const FILTER_DEFS = [
+  {key:'all', label:'All', dot:null},
+  {key:'ui_element', label:'UI Element', dot:TYPE_DOT.ui_element},
+  {key:'icon', label:'Icon', dot:TYPE_DOT.icon},
+  {key:'sprite', label:'Sprite', dot:TYPE_DOT.sprite},
+  {key:'tile', label:'Tile', dot:TYPE_DOT.tile},
+  {key:'sprite_sheet', label:'Sprite Sheet', dot:TYPE_DOT.sprite_sheet},
+];
+const REGIONS = [
+  {id:'r1', name:'Score Panel', x:4, y:5, w:28, h:13, color:'#6c8cff', prompt:'The panel from the reference, isolated, transparent background, matching art style. Weathered stone plaque with faint gold inlay.'},
+  {id:'r2', name:'Health Bar Frame', x:4, y:22, w:22, h:7, color:'#2dd4bf', prompt:'The health bar frame from the reference, isolated, transparent background. Iron bracket ends, blank interior for a fill bar.'},
+  {id:'r3', name:'Play Button', x:38, y:65, w:24, h:10, color:'#c084fc', prompt:'The button from the reference, isolated, transparent background. Carved stone, no text, uniform edges for 9-slice scaling.'},
+  {id:'r4', name:'Floor Tile', x:74, y:78, w:15, h:15, color:'#f5a623', prompt:'The floor tile from the reference, isolated, transparent background. Seamlessly tileable stone texture, edges wrap perfectly.'},
+];
+
+function navStyle(active){
+  return 'display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;'
+    + (active ? 'background:#262c35;color:#eef0f2' : 'color:#9aa2ad;background:transparent');
+}
+function segStyle(active){
+  return 'flex:1;min-width:0;text-align:center;padding:8px 4px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid ' + (active ? '#4a5fc7' : '#2a2f37') + ';background:' + (active ? 'rgba(108,140,255,0.15)' : '#22262d') + ';color:' + (active ? '#a9bcff' : '#9aa2ad');
+}
+function segStyleSm(active){
+  return 'flex:1;text-align:center;padding:6px 0;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid ' + (active ? '#4a5fc7' : '#2a2f37') + ';background:' + (active ? 'rgba(108,140,255,0.15)' : '#22262d') + ';color:' + (active ? '#a9bcff' : '#9aa2ad');
+}
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.nsRef = React.createRef();
+    this.state = {
+      page: 'projects',
+      provider: 'openai',
+      assetFilter: 'all',
+      detailAssetId: 'a1',
+      selectedVersion: 1,
+      ns: {l:22, t:18, r:78, b:74},
+      dragGuide: null,
+      selectedRegionId: 'r3',
+      selectedAssetIds: {a1:true, a2:true, a4:true, a6:true},
+      ppu: 100,
+      filterMode: 'point',
+      wrapMode: 'clamp',
+    };
+  }
+
+  goTo = (page) => () => this.setState({page});
+  openAsset = (id) => () => this.setState({page:'detail', detailAssetId:id});
+  setFilter = (key) => () => this.setState({assetFilter:key});
+  setProvider = (p) => () => this.setState({provider:p});
+  selectVersion = (i) => () => this.setState({selectedVersion:i});
+  selectRegion = (id) => () => this.setState({selectedRegionId:id});
+  toggleAsset = (id) => (e) => { e.stopPropagation(); this.setState(s => ({selectedAssetIds:{...s.selectedAssetIds, [id]: !s.selectedAssetIds[id]}})); };
+  incPpu = () => this.setState(s => ({ppu: Math.min(512, s.ppu+8)}));
+  decPpu = () => this.setState(s => ({ppu: Math.max(8, s.ppu-8)}));
+  setFilterMode = (m) => () => this.setState({filterMode:m});
+  setWrapMode = (m) => () => this.setState({wrapMode:m});
+
+  guideDown = (guide) => (e) => { e.target.setPointerCapture(e.pointerId); this.setState({dragGuide:guide}); };
+  guideUp = () => this.setState({dragGuide:null});
+  guideMove = (e) => {
+    const g = this.state.dragGuide;
+    if(!g || !this.nsRef.current) return;
+    const rect = this.nsRef.current.getBoundingClientRect();
+    let pct = g === 'l' || g === 'r'
+      ? ((e.clientX - rect.left) / rect.width) * 100
+      : ((e.clientY - rect.top) / rect.height) * 100;
+    pct = Math.max(4, Math.min(96, pct));
+    this.setState(s => {
+      const ns = {...s.ns};
+      if(g==='l') ns.l = Math.min(pct, ns.r-8);
+      if(g==='r') ns.r = Math.max(pct, ns.l+8);
+      if(g==='t') ns.t = Math.min(pct, ns.b-8);
+      if(g==='b') ns.b = Math.max(pct, ns.t+8);
+      return {ns};
+    });
+  };
+
+  renderVals(){
+    const s = this.state;
+    const detailAsset = ASSETS.find(a => a.id === s.detailAssetId) || ASSETS[0];
+    const filteredAssets = (s.assetFilter === 'all' ? ASSETS : ASSETS.filter(a => a.type === s.assetFilter)).map(a => ({
+      ...a, slotId:'asset-'+a.id, typeLabel: TYPE_LABEL[a.type], dot: TYPE_DOT[a.type], open: this.openAsset(a.id),
+    }));
+    const filters = FILTER_DEFS.map(f => ({
+      key:f.key, label:f.label, dot:f.dot, onClick:this.setFilter(f.key),
+      style:'display:flex;align-items:center;padding:7px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid '
+        + (s.assetFilter===f.key ? '#4a5fc7' : '#282d35') + ';background:' + (s.assetFilter===f.key ? 'rgba(108,140,255,0.14)' : '#1b1f26')
+        + ';color:' + (s.assetFilter===f.key ? '#a9bcff' : '#9aa2ad'),
+    }));
+    const versionData = [
+      {provider:'OpenAI', time:'Just now'}, {provider:'Gemini', time:'12 min ago'}, {provider:'OpenAI', time:'1 hour ago'},
+    ];
+    const versions = versionData.map((v,i) => ({
+      ...v, slotId:'version-'+i, select:this.selectVersion(i),
+      rowStyle:'display:flex;align-items:center;gap:12px;padding:9px;border-radius:9px;cursor:pointer;border:1px solid '+(s.selectedVersion===i?'#4a5fc7':'transparent')+';background:'+(s.selectedVersion===i?'rgba(108,140,255,0.08)':'transparent'),
+      radioStyle:'width:16px;height:16px;border-radius:50%;flex-shrink:0;border:2px solid '+(s.selectedVersion===i?'#6c8cff':'#3a4048')+';background:'+(s.selectedVersion===i?'#6c8cff':'transparent'),
+    }));
+    const regions = REGIONS.map(r => {
+      const sel = r.id === s.selectedRegionId;
+      return {
+        ...r, select:this.selectRegion(r.id),
+        boxStyle:'position:absolute;left:'+r.x+'%;top:'+r.y+'%;width:'+r.w+'%;height:'+r.h+'%;border-radius:4px;cursor:pointer;border:2px solid '+(sel?r.color:r.color+'99')+';background:'+r.color+(sel?'26':'12'),
+        tagStyle:'position:absolute;top:3px;left:3px;font-size:10px;font-weight:600;padding:2px 6px;border-radius:4px;white-space:nowrap;background:'+r.color+';color:#0e1116',
+        rowStyle:'display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;cursor:pointer;background:'+(sel?'#22262d':'transparent'),
+      };
+    });
+    const selectedRegionRaw = REGIONS.find(r => r.id === s.selectedRegionId) || REGIONS[0];
+    const selectedRegion = {...selectedRegionRaw, cropSlotId:'crop-'+selectedRegionRaw.id};
+    const exportAssets = ASSETS.map(a => {
+      const checked = !!s.selectedAssetIds[a.id];
+      return {
+        ...a, typeLabel:TYPE_LABEL[a.type], toggle:this.toggleAsset(a.id), checkMark: checked ? '✓' : '',
+        rowStyle:'display:flex;align-items:center;gap:11px;padding:8px 9px;border-radius:8px;cursor:pointer;background:'+(checked?'#20252c':'transparent'),
+        checkStyle:'width:17px;height:17px;border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#0e1116;border:1.5px solid '+(checked?'#6c8cff':'#3a4048')+';background:'+(checked?'#6c8cff':'transparent'),
+      };
+    });
+    const selectedCount = Object.values(s.selectedAssetIds).filter(Boolean).length;
+
+    return {
+      isProjects: s.page==='projects', isSettings: s.page==='settings', isAssets: s.page==='assets',
+      isDetail: s.page==='detail', isMockup: s.page==='mockup', isExport: s.page==='export',
+      goProjects: this.goTo('projects'), goSettings: this.goTo('settings'), goAssets: this.goTo('assets'),
+      goMockup: this.goTo('mockup'), goExport: this.goTo('export'),
+      navProjectsStyle: navStyle(s.page==='projects'), navSettingsStyle: navStyle(s.page==='settings'),
+      navAssetsStyle: navStyle(s.page==='assets' || s.page==='detail'), navMockupStyle: navStyle(s.page==='mockup'),
+      navExportStyle: navStyle(s.page==='export'),
+      projects: PROJECTS.map(p => ({...p, slotId:'proj-'+p.id, open:this.goTo('assets')})),
+      paletteChips: PALETTE_CHIPS.map(hex => ({hex})),
+      ppu: s.ppu, incPpu: this.incPpu, decPpu: this.decPpu,
+      filterPointStyle: segStyle(s.filterMode==='point'), filterBilinearStyle: segStyle(s.filterMode==='bilinear'),
+      setFilterPoint: this.setFilterMode('point'), setFilterBilinear: this.setFilterMode('bilinear'),
+      wrapClampStyle: segStyle(s.wrapMode==='clamp'), wrapRepeatStyle: segStyle(s.wrapMode==='repeat'),
+      setWrapClamp: this.setWrapMode('clamp'), setWrapRepeat: this.setWrapMode('repeat'),
+      filters, filteredAssets,
+      detailAsset: {...detailAsset, typeLabel:TYPE_LABEL[detailAsset.type], dot:TYPE_DOT[detailAsset.type], path:'Assets/'+TYPE_FOLDER[detailAsset.type]+'/'+detailAsset.name.replace(/\s+/g,'')+'.png'},
+      versions,
+      providerOpenaiStyle: segStyle(s.provider==='openai'), providerGeminiStyle: segStyle(s.provider==='gemini'),
+      providerOpenaiStyleSm: segStyleSm(s.provider==='openai'), providerGeminiStyleSm: segStyleSm(s.provider==='gemini'),
+      setProviderOpenai: this.setProvider('openai'), setProviderGemini: this.setProvider('gemini'),
+      providerNote: s.provider==='openai' ? 'Native alpha transparency via gpt-image-1.' : 'Nano Banana reference-following; chroma-key removal + rembg fallback applied automatically.',
+      nsRef: this.nsRef,
+      ns: {l:s.ns.l, t:s.ns.t, r:s.ns.r, b:s.ns.b, lRound:Math.round(s.ns.l), tRound:Math.round(s.ns.t), rRound:Math.round(s.ns.r), bRound:Math.round(s.ns.b)},
+      onGuideDown_l: this.guideDown('l'), onGuideDown_r: this.guideDown('r'), onGuideDown_t: this.guideDown('t'), onGuideDown_b: this.guideDown('b'),
+      onGuideMove: this.guideMove, onGuideUp: this.guideUp,
+      regions, selectedRegion,
+      exportAssets, selectedCount,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

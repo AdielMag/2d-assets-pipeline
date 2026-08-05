@@ -1,0 +1,60 @@
+# Codecov gate for pull requests.
+#
+# `patch` is the one that blocks a merge: it scores ONLY the lines this PR added or
+# changed, so an untested new function fails the check no matter how healthy the rest of
+# the repo is. `project` is the safety net that stops overall coverage sliding backwards.
+#
+# Both are listed as required status checks on `main` (see the branch protection rules),
+# so a failing status here prevents the merge button from going green.
+
+codecov:
+  require_ci_to_pass: true
+  notify:
+    wait_for_ci: true
+
+coverage:
+  precision: 2
+  round: down
+  range: "30...90"
+
+  status:
+    patch:
+      default:
+        # New/changed lines must be 80% covered. This is the merge gate the repo cares
+        # about — the historical total sits near 32% because the routers and providers
+        # predate the test suite, and holding new work to the old average would just
+        # cement that.
+        target: 80%
+        threshold: 0%
+        if_ci_failed: error
+        only_pulls: true
+
+    project:
+      default:
+        # Ratchet: never drop more than half a point below whatever the base commit had.
+        target: auto
+        threshold: 0.5%
+        if_ci_failed: error
+
+# coverage.xml is produced with `source = app` inside server/, so its filenames are
+# relative to app/ itself ("processing/extract.py"). Prefix them so Codecov can find the
+# matching file in the repo tree.
+fixes:
+  - "::server/app/"
+
+ignore:
+  - "server/tests/**"
+  - "server/tools/**"
+  - "server/app/experiments/**"
+  - "server/scratch_regen.py"
+  - "client/**"
+  - "unity/**"
+  - "unity-clashup/**"
+  - "unity-test/**"
+  - "design/**"
+  - "docs/**"
+
+comment:
+  layout: "header, diff, flags, files, footer"
+  behavior: default
+  require_changes: false

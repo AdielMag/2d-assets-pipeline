@@ -1,0 +1,22 @@
+[run]
+source = app
+branch = True
+# Keep the report's paths relative rather than absolute, so a run on this Windows box
+# and a run on the Linux CI runner produce the same filenames. `source = app` makes them
+# relative to app/ itself (`processing/extract.py`), which codecov.yml's `fixes` block
+# re-roots to `server/app/processing/extract.py`.
+relative_files = True
+omit =
+    app/experiments/*
+    app/__init__.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    if TYPE_CHECKING:
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    \.\.\.
+
+[xml]
+output = coverage.xml

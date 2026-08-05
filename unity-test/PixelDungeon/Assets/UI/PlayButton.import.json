@@ -1,0 +1,15 @@
+{
+  "pixelsPerUnit": 100,
+  "spriteBorder": [
+    120,
+    109,
+    135,
+    114
+  ],
+  "spriteMode": "Sliced",
+  "filterMode": "Point",
+  "wrapMode": "Clamp",
+  "meshType": "FullRect",
+  "sheetRows": 0,
+  "sheetCols": 0
+}

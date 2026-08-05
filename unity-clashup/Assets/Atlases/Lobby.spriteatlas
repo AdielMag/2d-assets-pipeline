@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &1
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0, guid: 0000000000000000e000000000000000, type: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Lobby
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      paddingPower: 1
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 2bbd320f819f4b5f9cbf56f3284439b8, type: 3}
+    - {fileID: 2800000, guid: 3ac9d9f585e64d50bc6a3d257d22db41, type: 3}
+    - {fileID: 2800000, guid: a2dda2f9aa0042219644e117f4f65ee2, type: 3}
+    - {fileID: 2800000, guid: 1e98d563163644b9a6f81ceed28801f2, type: 3}
+    - {fileID: 2800000, guid: 10807bb0c00648dd9c20fd5c4f0fbf20, type: 3}
+    - {fileID: 2800000, guid: ef04356712cc462eb2aad4ab7a323d52, type: 3}
+    - {fileID: 2800000, guid: 96b1da38a01f4abb9b51570e45e966e4, type: 3}
+    - {fileID: 2800000, guid: b9aa801833ea4208901fb771e6cf362b, type: 3}
+    - {fileID: 2800000, guid: de98d3d2cb994177b1dc3f75c6a9645e, type: 3}
+    - {fileID: 2800000, guid: 5e4f3424fd5c4a6dba560f3a0cddb1cc, type: 3}
+    - {fileID: 2800000, guid: 79fb066455b94a70a1418757afc14fdd, type: 3}
+    - {fileID: 2800000, guid: 19fc9e3000ab4c0ea515bf1d9e77d9ce, type: 3}
+    - {fileID: 2800000, guid: 17a5479f25104baba8d36bce7add114a, type: 3}
+    - {fileID: 2800000, guid: 653a52e7174d41d0843806f8cf8a5a09, type: 3}
+    - {fileID: 2800000, guid: 0175e1222ef141c4b4b0a1db5c0fb658, type: 3}
+    - {fileID: 2800000, guid: 97dcd2041aac42d4ba06f178ff05bdff, type: 3}
+    - {fileID: 2800000, guid: 525ce67453bf46689429c3a044635e5e, type: 3}
+    - {fileID: 2800000, guid: db723ee6b30444939a185f9a2f25de4d, type: 3}
+    - {fileID: 2800000, guid: f2e65824d17c4e0f9c78450daa166a50, type: 3}
+    - {fileID: 2800000, guid: 7a80bb08d10e4b50a650a80f9afa2b43, type: 3}
+    - {fileID: 2800000, guid: c71c6a1d6acb4bda89eb43258b22bf2a, type: 3}
+    - {fileID: 2800000, guid: 9ffd37b7fc314cf8b439c3020af9c209, type: 3}
+    - {fileID: 2800000, guid: 4d923f8105224b6c91100fa702e2f133, type: 3}
+    - {fileID: 2800000, guid: 8242755a622f42c694d0983392f6f42a, type: 3}
+    - {fileID: 2800000, guid: fee50ef822d0490aaa57c6f5b52bbd79, type: 3}
+    - {fileID: 2800000, guid: 20bce3d0f3f3481bad53973ecf55b369, type: 3}
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites: []
+  m_PackedSpriteNamesToIndex: []
+  m_RenderDataMap: {}
+  m_Tag: Lobby
+  m_IsVariant: 0

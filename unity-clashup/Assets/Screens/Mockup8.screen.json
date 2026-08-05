@@ -1,0 +1,482 @@
+{
+  "screen": "Mockup8",
+  "reference": "768x1376",
+  "elements": [
+    {
+      "kind": "sprite",
+      "asset": "NavBarFrame",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/NavBarFrame.png",
+      "rect": {
+        "x": 0.0,
+        "y": 0.89317,
+        "w": 1.0,
+        "h": 0.10683
+      },
+      "z": 0,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "PlayButton",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/PlayButton.png",
+      "rect": {
+        "x": 0.08366,
+        "y": 0.73783,
+        "w": 0.53906,
+        "h": 0.14099
+      },
+      "z": 1,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "GameModeButton",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/GameModeButton.png",
+      "rect": {
+        "x": 0.58822,
+        "y": 0.73983,
+        "w": 0.33691,
+        "h": 0.14244
+      },
+      "z": 2,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "PlayerProfileBanner",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/PlayerProfileBanner.png",
+      "rect": {
+        "x": 0.13086,
+        "y": 0.02162,
+        "w": 0.32454,
+        "h": 0.06813
+      },
+      "z": 3,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "BattleNavTabFrame",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/BattleNavTabFrame.png",
+      "rect": {
+        "x": 0.40169,
+        "y": 0.08503,
+        "w": 0.19727,
+        "h": 0.86224
+      },
+      "z": 4,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "AvatarFrame",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/AvatarFrame.png",
+      "rect": {
+        "x": 0.01953,
+        "y": 0.0,
+        "w": 0.15625,
+        "h": 0.09884
+      },
+      "z": 5,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "BattleNavIcon",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/BattleNavIcon.png",
+      "rect": {
+        "x": 0.10726,
+        "y": -0.20118,
+        "w": 0.81683,
+        "h": 0.93886
+      },
+      "z": 6,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 4
+    },
+    {
+      "kind": "sprite",
+      "asset": "GoldCurrencyPill",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/GoldCurrencyPill.png",
+      "rect": {
+        "x": 0.71224,
+        "y": 0.06468,
+        "w": 0.27604,
+        "h": 0.04797
+      },
+      "z": 7,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "PlayButtonTextPLAY",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/PlayButtonTextPLAY.png",
+      "rect": {
+        "x": 0.44867,
+        "y": 0.29768,
+        "w": 0.37198,
+        "h": 0.45876
+      },
+      "z": 8,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 1
+    },
+    {
+      "kind": "sprite",
+      "asset": "GemCurrencyPill",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/GemCurrencyPill.png",
+      "rect": {
+        "x": 0.71615,
+        "y": 0.01599,
+        "w": 0.27214,
+        "h": 0.04578
+      },
+      "z": 9,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "EventsNavIcon",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/EventsNavIcon.png",
+      "rect": {
+        "x": 0.83236,
+        "y": 0.09184,
+        "w": 0.1416,
+        "h": 0.72619
+      },
+      "z": 10,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "SocialNavIcon",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/SocialNavIcon.png",
+      "rect": {
+        "x": 0.63932,
+        "y": 0.06803,
+        "w": 0.13346,
+        "h": 0.7483
+      },
+      "z": 11,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "CardsNavIcon",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/CardsNavIcon.png",
+      "rect": {
+        "x": 0.22591,
+        "y": 0.08673,
+        "w": 0.13704,
+        "h": 0.66837
+      },
+      "z": 12,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "GameModeButtonTextGAMEMODE",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/GameModeButtonTextGAMEMODE.png",
+      "rect": {
+        "x": 0.2058,
+        "y": 0.2602,
+        "w": 0.41739,
+        "h": 0.47449
+      },
+      "z": 13,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 2
+    },
+    {
+      "kind": "sprite",
+      "asset": "ShopNavIcon",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/ShopNavIcon.png",
+      "rect": {
+        "x": 0.03353,
+        "y": 0.11735,
+        "w": 0.125,
+        "h": 0.63605
+      },
+      "z": 14,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "LevelBadge",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/LevelBadge.png",
+      "rect": {
+        "x": 0.04557,
+        "y": 0.06195,
+        "w": 0.10254,
+        "h": 0.05741
+      },
+      "z": 15,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": -1
+    },
+    {
+      "kind": "sprite",
+      "asset": "GoldCoinIcon",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/GoldCoinIcon.png",
+      "rect": {
+        "x": 0.01887,
+        "y": -0.04924,
+        "w": 0.33019,
+        "h": 1.06818
+      },
+      "z": 16,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 7
+    },
+    {
+      "kind": "sprite",
+      "asset": "GemIcon",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/GemIcon.png",
+      "rect": {
+        "x": 0.03349,
+        "y": -0.05556,
+        "w": 0.2823,
+        "h": 1.10714
+      },
+      "z": 17,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 9
+    },
+    {
+      "kind": "sprite",
+      "asset": "LeftArrow",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/LeftArrow.png",
+      "rect": {
+        "x": 0.37207,
+        "y": 0.2449,
+        "w": 0.07552,
+        "h": 0.45068
+      },
+      "z": 18,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "LeftArrow",
+      "type": "ui_element",
+      "sprite": "Assets/Atlases/Lobby/LeftArrow.png",
+      "rect": {
+        "x": 0.55762,
+        "y": 0.2381,
+        "w": 0.07064,
+        "h": 0.47619
+      },
+      "z": 19,
+      "fit": "stretch",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "NavBarFrameTextShop",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/NavBarFrameTextShop.png",
+      "rect": {
+        "x": 0.05208,
+        "y": 0.65986,
+        "w": 0.08594,
+        "h": 0.29932
+      },
+      "z": 20,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "NavBarFrameTextEvents",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/NavBarFrameTextEvents.png",
+      "rect": {
+        "x": 0.84635,
+        "y": 0.71429,
+        "w": 0.11328,
+        "h": 0.21769
+      },
+      "z": 21,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "NavBarFrameTextBattle",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/NavBarFrameTextBattle.png",
+      "rect": {
+        "x": 0.20792,
+        "y": 0.75345,
+        "w": 0.56106,
+        "h": 0.2288
+      },
+      "z": 22,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 4
+    },
+    {
+      "kind": "sprite",
+      "asset": "BattleNavTabFrameTextBattle",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/BattleNavTabFrameTextBattle.png",
+      "rect": {
+        "x": 0.0,
+        "y": -0.03448,
+        "w": 0.98824,
+        "h": 1.0
+      },
+      "z": 23,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 22
+    },
+    {
+      "kind": "sprite",
+      "asset": "NavBarFrameTextCards",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/NavBarFrameTextCards.png",
+      "rect": {
+        "x": 0.24479,
+        "y": 0.71429,
+        "w": 0.09896,
+        "h": 0.21088
+      },
+      "z": 24,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "sprite",
+      "asset": "NavBarFrameTextSocial",
+      "type": "icon",
+      "sprite": "Assets/Atlases/Lobby/NavBarFrameTextSocial.png",
+      "rect": {
+        "x": 0.65104,
+        "y": 0.73469,
+        "w": 0.09766,
+        "h": 0.19728
+      },
+      "z": 25,
+      "fit": "contain",
+      "mirror": false,
+      "parent": 0
+    },
+    {
+      "kind": "label",
+      "asset": "PlayerNameLabel",
+      "text": "PlayerOne",
+      "rect": {
+        "x": 0.1545,
+        "y": 0.17289,
+        "w": 0.58174,
+        "h": 0.65021
+      },
+      "z": 26,
+      "color": "#FFFFFF",
+      "align": "center",
+      "parent": 3
+    },
+    {
+      "kind": "label",
+      "asset": "LevelLabel",
+      "text": "42",
+      "rect": {
+        "x": 0.2665,
+        "y": 0.28818,
+        "w": 0.394,
+        "h": 0.43022
+      },
+      "z": 27,
+      "color": "#FFFFFF",
+      "align": "center",
+      "parent": 15
+    },
+    {
+      "kind": "label",
+      "asset": "GemAmountLabel",
+      "text": "1,250",
+      "rect": {
+        "x": 0.46908,
+        "y": 0.1597,
+        "w": 0.40678,
+        "h": 0.69892
+      },
+      "z": 28,
+      "color": "#FFD2F8",
+      "align": "center",
+      "parent": 9
+    },
+    {
+      "kind": "label",
+      "asset": "GoldAmountLabel",
+      "text": "45,000",
+      "rect": {
+        "x": 0.29728,
+        "y": 0.13593,
+        "w": 0.63215,
+        "h": 0.66715
+      },
+      "z": 29,
+      "color": "#FFE899",
+      "align": "center",
+      "parent": 7
+    }
+  ]
+}

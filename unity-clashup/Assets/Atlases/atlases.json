@@ -1,0 +1,19 @@
+{
+  "atlases": [
+    {
+      "name": "Common",
+      "parent": null,
+      "folder": "Assets/Atlases/Common"
+    },
+    {
+      "name": "Lobby",
+      "parent": "Common",
+      "folder": "Assets/Atlases/Lobby"
+    },
+    {
+      "name": "NavigationBar",
+      "parent": "Lobby",
+      "folder": "Assets/Atlases/NavigationBar"
+    }
+  ]
+}

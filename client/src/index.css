@@ -1,0 +1,211 @@
+:root {
+  --bg: #14161a;
+  --sidebar: #191c21;
+  --card: #1b1f26;
+  --input: #14171b;
+  --border: #282d35;
+  --border-2: #2a2f37;
+  --border-3: #3a4048;
+  --accent: #6c8cff;
+  --accent-hover: #82a0ff;
+  --accent-border: #4a5fc7;
+  --green: #3ecf8e;
+  --warm: #f5a623;
+  --text: #e8eaed;
+  --text-2: #c3c9d1;
+  --text-3: #9aa2ad;
+  --muted: #7d8590;
+  --muted-2: #5a616b;
+  --mono: ui-monospace, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #33383f; border-radius: 5px; }
+
+textarea, input, select, button { font-family: inherit; color: inherit; }
+
+h1 { font-size: 20px; font-weight: 600; margin: 0; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-accent { background: var(--accent); color: #0e1116; }
+.btn-accent:hover { background: var(--accent-hover); }
+.btn-accent:disabled { opacity: 0.5; cursor: default; }
+.btn-secondary {
+  background: #22262d;
+  border: 1px solid var(--border-2);
+  color: #dfe2e6;
+}
+.btn-secondary:hover { background: #282d35; }
+.btn-danger {
+  background: #3e1b1e;
+  border: 1px solid #6e2a2e;
+  color: #ff8585;
+}
+.btn-danger:hover {
+  background: #522226;
+  border-color: #8c353a;
+  color: #ffa4a4;
+}
+
+.input, .textarea {
+  width: 100%;
+  border: 1px solid var(--border-2);
+  background: var(--input);
+  border-radius: 8px;
+  padding: 10px 13px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #dfe2e6;
+  outline: none;
+  resize: vertical;
+}
+.input:focus, .textarea:focus { border-color: var(--accent-border); }
+
+.field-label { font-size: 11.5px; color: var(--muted); margin-bottom: 6px; }
+
+.seg-row { display: flex; gap: 6px; min-width: 0; }
+.seg {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  padding: 8px 4px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  border: 1px solid var(--border-2);
+  background: #22262d;
+  color: var(--text-3);
+  user-select: none;
+}
+.seg.active {
+  border-color: var(--accent-border);
+  background: rgba(108, 140, 255, 0.15);
+  color: #a9bcff;
+}
+.seg-sm { padding: 6px 0; font-size: 11px; }
+
+.checkerboard {
+  background-image:
+    linear-gradient(45deg, #20242b 25%, transparent 25%),
+    linear-gradient(-45deg, #20242b 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #20242b 75%),
+    linear-gradient(-45deg, transparent 75%, #20242b 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+  background-color: #181b21;
+}
+.checkerboard-sm {
+  background-size: 14px 14px;
+  background-position: 0 0, 0 7px, 7px -7px, -7px 0;
+}
+
+/* Selection outline for the image editor: black/white dashes that crawl, so the marquee
+   stays legible over any artwork (a single-colour border disappears on matching pixels). */
+.marching-ants {
+  background-image:
+    linear-gradient(90deg, #fff 50%, #111 50%),
+    linear-gradient(90deg, #fff 50%, #111 50%),
+    linear-gradient(0deg, #fff 50%, #111 50%),
+    linear-gradient(0deg, #fff 50%, #111 50%);
+  background-size: 8px 1px, 8px 1px, 1px 8px, 1px 8px;
+  background-position: 0 0, 0 100%, 0 0, 100% 0;
+  background-repeat: repeat-x, repeat-x, repeat-y, repeat-y;
+  animation: marching-ants 0.6s linear infinite;
+}
+@keyframes marching-ants {
+  to { background-position: 8px 0, -8px 100%, 0 -8px, 100% 8px; }
+}
+
+.mono { font-family: var(--mono); }
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-3);
+  text-decoration: none;
+}
+.nav-item:hover { color: #eef0f2; }
+.nav-item.active { background: #262c35; color: #eef0f2; }
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text-3);
+  user-select: none;
+}
+.pill.active {
+  border-color: var(--accent-border);
+  background: rgba(108, 140, 255, 0.14);
+  color: #a9bcff;
+}
+
+.hover-border:hover { border-color: var(--border-3) !important; }
+
+.back-to-projects:hover { color: #eef0f2; }
+.back-to-projects:hover svg { color: var(--accent); }
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 15, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border-3);
+  border-radius: 12px;
+  padding: 22px;
+  width: 420px;
+  max-width: calc(100vw - 40px);
+}

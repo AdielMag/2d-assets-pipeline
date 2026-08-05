@@ -1,0 +1,65 @@
+# --- Python / server ---
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+server/.env
+
+# --- Node / client ---
+node_modules/
+dist/
+
+# --- Generated content ---
+# Every image the pipeline produces plus the SQLite DB — regenerated per machine,
+# ~1 GB, and full of project-specific art. See CLAUDE.md for the layout.
+storage/
+
+# Scratch renders and probe output dropped by tools/ and scratch_regen.py
+_final.png
+_sprites.png
+models.txt
+server/baseline.json
+server/current.json
+
+# --- Unity ---
+# Standard Unity ignores: everything below is regenerated on first project open.
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+sysinfo.txt
+*.apk
+*.aab
+*.unitypackage
+*.app
+crashlytics-build.properties
+
+# --- OS / editor ---
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vs/
+*.swp

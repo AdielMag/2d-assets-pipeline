@@ -1,0 +1,19 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+sqlalchemy>=2.0
+pydantic>=2.6
+python-dotenv>=1.0
+python-multipart>=0.0.9
+pillow>=10.2
+numpy>=1.26
+opencv-python-headless>=4.9
+scikit-image>=0.22
+scipy>=1.11
+# Closed-form alpha matting + Germer foreground estimation, used on every extraction
+# (processing/extract.py). Base install, not requirements-ml.txt: it is numpy/scipy only,
+# no torch and no model download, and without it extraction falls back to hard binary
+# edges — which is a visible quality loss, not an optional enhancement.
+pymatting>=1.1
+openai>=1.30
+# optional: better background removal fallback for Gemini outputs (heavy: pulls onnxruntime)
+rembg>=2.0 ; python_version >= "3.10"

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &1
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0, guid: 0000000000000000e000000000000000, type: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: NavigationBar
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      paddingPower: 1
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: 4a70f06ce84f44cca0b02af5f5989f84, type: 3}
+    - {fileID: 2800000, guid: 31f2f080e69542c787d7b25e84b581ac, type: 3}
+    - {fileID: 2800000, guid: 13587f843aee42239bd691c8ca047fe6, type: 3}
+    - {fileID: 2800000, guid: 8f2413004d144cd19aab6f4652b9735b, type: 3}
+    - {fileID: 2800000, guid: 30ce6d9b22aa469d8204a80947a23f5b, type: 3}
+    - {fileID: 2800000, guid: f90ba46a1ecb4193866e7e902b22cff9, type: 3}
+    - {fileID: 2800000, guid: 0a1ff9059af74bb4bb2d5c569625c792, type: 3}
+    - {fileID: 2800000, guid: 1bae0a3c2e0444609726ce88bc64a56d, type: 3}
+    - {fileID: 2800000, guid: cbcf23fa5f0e476dac8b33284ad0f44f, type: 3}
+    - {fileID: 2800000, guid: e490fa81db454eea87f809f2814f3918, type: 3}
+    - {fileID: 2800000, guid: 3af4eb591ba44a4298b0bb4e45607f10, type: 3}
+    - {fileID: 2800000, guid: a60285dd860744368d16da3f23717e0a, type: 3}
+    - {fileID: 2800000, guid: 8f02b8386fed489e977b090bb5dc1486, type: 3}
+    - {fileID: 2800000, guid: 05f9cefe58f442f8945832273749ae36, type: 3}
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites: []
+  m_PackedSpriteNamesToIndex: []
+  m_RenderDataMap: {}
+  m_Tag: NavigationBar
+  m_IsVariant: 0
