@@ -13,7 +13,7 @@ redrawing a single thing it didn't have to.*
 [![CI](https://github.com/AdielMag/2d-assets-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/AdielMag/2d-assets-pipeline/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/AdielMag/2d-assets-pipeline/branch/main/graph/badge.svg)](https://codecov.io/gh/AdielMag/2d-assets-pipeline)
 [![Tests](https://img.shields.io/badge/tests-73%20passing-3fb950)](server/tests)
-[![License](https://img.shields.io/badge/license-private-6c8cff)](#)
+[![Patch coverage gate](https://img.shields.io/badge/patch%20coverage%20gate-80%25-6c8cff)](codecov.yml)
 
 <br/>
 
@@ -666,6 +666,11 @@ flowchart LR
 Configured in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and
 [`codecov.yml`](codecov.yml).
 
+> **Codecov token.** Tokenless upload works from GitHub Actions on a public repo, but it is
+> rate-limited and occasionally flaky. Add the repo's upload token as a `CODECOV_TOKEN`
+> secret (Settings → Secrets and variables → Actions) to make it reliable — the workflow
+> already reads it.
+
 ---
 
 ## 🤝 Contributing
@@ -687,9 +692,12 @@ gh pr create
 | ✅ `client typecheck + lint + build` | oxlint, `tsc -b`, `vite build` all clean |
 | ✅ `codecov/patch` | **Lines this PR adds or changes are ≥ 80% covered** |
 | ✅ `codecov/project` | Total coverage hasn't dropped more than 0.5% |
-| ✅ Review | One approving review |
 | ✅ Up to date | Branch is current with `main` |
 | ✅ Conversations | All review threads resolved |
+
+Approving reviews are **not** required — the repo is single-maintainer and GitHub does not
+let you approve your own PR, so requiring one would make merging impossible. The status
+checks are the gate. Force-pushes and branch deletion on `main` are blocked outright.
 
 The patch gate is the one that matters day to day: the historical total sits near 32% because
 the routers predate the test suite, and holding new work to that old average would just cement
