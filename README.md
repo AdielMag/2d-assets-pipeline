@@ -468,8 +468,8 @@ erDiagram
         json reference_images
         text unity_path
         int ppu
-        string filter_mode "point | bilinear"
-        string wrap_mode "clamp | repeat"
+        string filter_mode "point / bilinear"
+        string wrap_mode "clamp / repeat"
         bool power_of_two
     }
     ATLAS {
@@ -479,13 +479,13 @@ erDiagram
     }
     ASSET {
         string name
-        string type "ui_element | icon | sprite | tile | sprite_sheet"
+        string type "ui_element / icon / sprite / tile / sprite_sheet"
         text prompt
         string aspect_ratio "W:H"
         string resolution "WxH"
         json nine_slice "l,t,r,b px"
-        string source "extract | generate | manual"
-        string prompt_mode "generate | reference"
+        string source "extract / generate / manual"
+        string prompt_mode "generate / reference"
         int selected_version_id
     }
     ASSET_VERSION {
@@ -502,7 +502,7 @@ erDiagram
         string template "shared-background group"
         text icon_prompt
         bool mirror
-        string source "per-region extract|generate override"
+        string source "per-region extract/generate override"
         bool force_rebuild
     }
     MOCKUP_LABEL {
@@ -510,7 +510,7 @@ erDiagram
         float x_y_w_h
         string color
         string align
-        string text_mode "keep | erase | extract"
+        string text_mode "keep / erase / extract"
     }
 ```
 
