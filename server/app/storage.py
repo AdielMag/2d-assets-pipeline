@@ -61,3 +61,15 @@ def rel_path(abs_path: Path) -> str:
 
 def abs_path(rel: str) -> Path:
     return STORAGE_DIR / rel
+
+
+def describe_size(width: int, height: int) -> str:
+    """Human-readable shape label for a sprite, e.g. "wide 800x224"."""
+    if width <= 0 or height <= 0:
+        return "empty"
+    ratio = width / height
+    if ratio > 1.5:
+        return f"wide {width}x{height}"
+    if ratio < 0.67:
+        return f"tall {width}x{height}"
+    return f"square-ish {width}x{height}"
