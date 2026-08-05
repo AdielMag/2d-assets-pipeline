@@ -4,6 +4,35 @@ $serverPath = Join-Path $projectRoot "server"
 $clientPath = Join-Path $projectRoot "client"
 $pythonExe = Join-Path $serverPath ".venv\Scripts\python.exe"
 
+function Check-PortAndPrompt($port, $name) {
+    $conns = @(Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue)
+    if ($conns.Count -gt 0) {
+        $procId = $conns[0].OwningProcess
+        $proc = Get-Process -Id $procId -ErrorAction SilentlyContinue
+        if ($proc) {
+            $procName = $proc.ProcessName
+            Write-Host "⚠️  Port $port is already in use by process '$procName' (PID: $procId) for $name" -ForegroundColor Yellow
+            $response = Read-Host "Do you want to kill this process? (y/N)"
+            if ($response -match "^[yY]") {
+                try {
+                    Stop-Process -Id $procId -Force -ErrorAction Stop
+                    Write-Host "✅ Process killed." -ForegroundColor Green
+                    Start-Sleep -Seconds 1
+                } catch {
+                    Write-Host "❌ Failed to kill process: $_" -ForegroundColor Red
+                    exit 1
+                }
+            } else {
+                Write-Host "❌ Cannot start $name. Port $port is in use." -ForegroundColor Red
+                exit 1
+            }
+        }
+    }
+}
+
+Check-PortAndPrompt 8787 "API Server"
+Check-PortAndPrompt 5173 "Client"
+
 Write-Host "🚀 Starting 2D Assets Pipeline servers..." -ForegroundColor Cyan
 Write-Host ""
 
@@ -43,7 +72,7 @@ try {
 finally {
     Write-Host ""
     Write-Host "🛑 Stopping servers..." -ForegroundColor Yellow
-    Stop-Process -InputObject $serverJob -ErrorAction SilentlyContinue -Force
-    Stop-Process -InputObject $clientJob -ErrorAction SilentlyContinue -Force
+    if ($serverJob) { Stop-Process -Id $serverJob.Id -ErrorAction SilentlyContinue -Force }
+    if ($clientJob) { Stop-Process -Id $clientJob.Id -ErrorAction SilentlyContinue -Force }
     Write-Host "✅ Servers stopped" -ForegroundColor Green
 }
