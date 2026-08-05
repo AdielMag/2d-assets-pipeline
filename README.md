@@ -647,29 +647,58 @@ alpha IoU and coverage.
 
 ```mermaid
 flowchart LR
-    PR["📥 Pull request"] --> J1["**server**<br/>pytest + coverage.xml"]
-    PR --> J2["**client**<br/>oxlint · tsc · vite build"]
-    J1 --> CC["📊 Codecov"]
-    CC --> P1["codecov/patch<br/><i>new lines ≥ 80%</i>"]
-    CC --> P2["codecov/project<br/><i>total may not drop >0.5%</i>"]
-    J2 --> G{"All checks green?"}
-    P1 --> G
-    P2 --> G
+    PR["📥 Pull request"] --> J1["**server tests + coverage**<br/>pytest → coverage.xml"]
+    PR --> J2["**client typecheck + lint + build**<br/>oxlint · tsc · vite build"]
+    J1 --> DC["🚦 **Patch coverage gate**<br/><i>diff-cover vs. origin/main</i><br/><b>fails under 80%</b>"]
+    J1 -.->|"reporting only"| CC["📊 Codecov<br/><i>badge + PR comment</i>"]
+    DC --> G{"Both required<br/>checks green?"}
+    J2 --> G
     G -->|"yes"| M["✅ Merge allowed"]
     G -->|"no"| B["🚫 Merge blocked"]
 
     style PR fill:#2a3550,stroke:#6c8cff,color:#eef0f2
+    style DC fill:#3d2b1f,stroke:#f5b820,color:#eef0f2
     style M fill:#1f3d2b,stroke:#3fb950,color:#eef0f2
     style B fill:#3d2222,stroke:#d63a3a,color:#eef0f2
 ```
 
+**The gate runs locally, not in a SaaS.** `diff-cover` reads `coverage.xml`, intersects it
+with the diff against `origin/main`, and exits non-zero if the lines this PR added or
+changed under `server/app` are less than **80%** covered. That failure takes down the
+`server tests + coverage` check, which is a required status check — so the merge button
+stays grey. No third-party service sits in the critical path, and the same command runs
+locally:
+
+```bash
+pytest tests --cov --cov-report=xml && diff-cover coverage.xml --compare-branch=origin/main --fail-under=80
+```
+
+Run it from `server/`. `coverage.xml`'s paths are relative to `server/app` (see
+[`server/.coveragerc`](server/.coveragerc)) and diff-cover resolves them against the working
+directory — from the repo root it silently matches nothing and always "passes".
+
 Configured in [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and
 [`codecov.yml`](codecov.yml).
 
-> **Codecov token.** Tokenless upload works from GitHub Actions on a public repo, but it is
-> rate-limited and occasionally flaky. Add the repo's upload token as a `CODECOV_TOKEN`
-> secret (Settings → Secrets and variables → Actions) to make it reliable — the workflow
-> already reads it.
+> ### ⚠️ Codecov needs a token
+>
+> The badge at the top of this README and the `codecov/patch` · `codecov/project` statuses
+> stay dark until Codecov is connected. Codecov **rejects tokenless uploads**, so:
+>
+> 1. Sign in at [codecov.io](https://codecov.io) with GitHub and add this repo
+> 2. Copy the repository upload token
+> 3. Add it as `CODECOV_TOKEN` under **Settings → Secrets and variables → Actions**
+>
+> The upload step is deliberately `continue-on-error` until then, so an unconfigured
+> Codecov can't block every merge. Once the token is in place, flip `fail_ci_if_error` to
+> `true` in the workflow and add the two Codecov contexts back as required checks:
+>
+> ```bash
+> gh api -X PUT repos/AdielMag/2d-assets-pipeline/rulesets/20438319 --input .github/ruleset.json
+> ```
+>
+> [`.github/ruleset.json`](.github/ruleset.json) is the branch protection kept in-repo, so
+> the rules are reviewable rather than living only in the GitHub UI.
 
 ---
 
