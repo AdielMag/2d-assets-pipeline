@@ -64,16 +64,14 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
-        # Non-blocking on purpose. Codecov rejects tokenless uploads, so until a
-        # CODECOV_TOKEN secret exists this step fails — and it must not take the build
-        # (and therefore every merge) down with it. The gate above is the one that blocks.
-        # Once the token is set, flip fail_ci_if_error to true and drop continue-on-error.
-        continue-on-error: true
+        # CODECOV_TOKEN is set (see README) — blocking now. codecov/patch and
+        # codecov/project post as separate PR statuses and are required checks on the
+        # ruleset alongside the diff-cover step above, which stays as the fast local gate.
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: server/coverage.xml
           flags: server
-          fail_ci_if_error: false
+          fail_ci_if_error: true
 
   client:
     name: client typecheck + lint + build
